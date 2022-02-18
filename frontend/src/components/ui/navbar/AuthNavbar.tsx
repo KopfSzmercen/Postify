@@ -21,6 +21,7 @@ import { FaArrowCircleRight } from "react-icons/fa";
 
 export default function AuthNavbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  console.log("redner");
 
   return (
     <>

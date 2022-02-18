@@ -1,5 +1,6 @@
 import path from "path";
 import { createConnection } from "typeorm";
+import { Friendship } from "../entities/Friendship";
 import { User } from "../entities/User";
 
 const connectDB = async () => {
@@ -11,12 +12,11 @@ const connectDB = async () => {
       username: "postgres",
       password: "qqqqqq",
       database: "gql",
-      entities: [User],
-      synchronize: true,
+      entities: [User, Friendship],
+      synchronize: false,
       logging: true,
       migrations: [path.join(__dirname, "./migrations/*")]
     });
-
     return connection;
   } catch (error) {
     console.log(error);

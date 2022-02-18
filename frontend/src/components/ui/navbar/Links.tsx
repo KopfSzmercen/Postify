@@ -1,8 +1,10 @@
 import { Icon, IconButton } from "@chakra-ui/react";
-import React from "react";
 import { FaBell, FaHome, FaUserFriends } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Links = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <IconButton
@@ -10,6 +12,7 @@ const Links = () => {
         aria-label="home"
         fontSize="25px"
         icon={<Icon as={FaHome} />}
+        onClick={() => navigate("/dashboard")}
       />
 
       <IconButton
@@ -17,6 +20,7 @@ const Links = () => {
         aria-label="people"
         fontSize="25px"
         icon={<Icon as={FaUserFriends} />}
+        onClick={() => navigate("/dashboard/users")}
       />
 
       <IconButton

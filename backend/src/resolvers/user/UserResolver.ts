@@ -5,6 +5,16 @@ import handleRegister from "./register";
 import { LoginInput, LoginResult } from "./login";
 import { MyContext } from "../../types";
 import handleLogin from "./login";
+import {
+  CreateFriendshipInput,
+  RegularResult,
+  handleCreateFriendship,
+  FriendsRequestsResult,
+  getFriendshipRequest,
+  handleManageFriendsRequest,
+  ManageFriendsRequestInput
+} from "./friends";
+import { GetUsersResult, handleGetUsers, UsersOptions } from "./getUsers";
 
 @Resolver(User)
 export class UserResolver {
@@ -21,6 +31,37 @@ export class UserResolver {
     @Ctx() context: MyContext
   ): Promise<LoginResult> {
     return await handleLogin(options, context);
+  }
+
+  @Mutation(() => RegularResult)
+  async createFriendship(
+    @Arg("options") options: CreateFriendshipInput,
+    @Ctx() context: MyContext
+  ): Promise<RegularResult> {
+    return await handleCreateFriendship(options, context);
+  }
+
+  @Query(() => FriendsRequestsResult)
+  async queryFriendsRequests(
+    @Ctx() context: MyContext
+  ): Promise<FriendsRequestsResult> {
+    return await getFriendshipRequest(context);
+  }
+
+  @Mutation(() => RegularResult)
+  async manageFriendsRequest(
+    @Arg("options") options: ManageFriendsRequestInput,
+    @Ctx() context: MyContext
+  ): Promise<RegularResult> {
+    return await handleManageFriendsRequest(options, context);
+  }
+
+  @Query(() => GetUsersResult)
+  async getUsers(
+    @Arg("options") options: UsersOptions,
+    @Ctx() context: MyContext
+  ): Promise<GetUsersResult> {
+    return await handleGetUsers(options, context);
   }
 
   @Query(() => String)
