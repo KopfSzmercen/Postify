@@ -1,15 +1,15 @@
-import { Field, InputType, ObjectType } from "type-graphql";
+import { Field, InputType, Int, ObjectType } from "type-graphql";
 import { getConnection } from "typeorm";
 import { User } from "../../entities/User";
 import { MyContext } from "../../types";
 
 @InputType()
 export class UsersOptions {
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   limit?: number;
 
-  @Field({ nullable: true })
-  cursor?: string;
+  @Field(() => Int, { nullable: true })
+  cursor?: number;
 }
 
 @ObjectType()
@@ -44,7 +44,7 @@ export const handleGetUsers = async (options: UsersOptions, ctx: MyContext) => {
     hasMore: false
   };
   const limit = options.limit || 20;
-  const cursor = options.cursor || "a";
+  const cursor = options.cursor || 1;
 
   const realLimit = Math.min(50, limit);
   const realLimitPlusOne = realLimit + 1;
@@ -53,9 +53,9 @@ export const handleGetUsers = async (options: UsersOptions, ctx: MyContext) => {
     const users = await getConnection()
       .getRepository(User)
       .createQueryBuilder("user")
-      .orderBy("user.username", "DESC")
+      .orderBy("user.id", "ASC")
       .take(realLimitPlusOne)
-      .where("user.username > :cursor", { cursor })
+      .where("user.id > :cursor", { cursor })
       .take(realLimitPlusOne)
       .getMany();
 

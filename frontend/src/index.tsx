@@ -6,12 +6,33 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
+import { GetUsersResult } from "./generated";
 import reportWebVitals from "./reportWebVitals";
 import theme from "./utils/theme";
 
 const client = new ApolloClient({
   uri: "http://localhost:4000/graphql",
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          getUsers: {
+            keyArgs: false,
+            merge(existing: GetUsersResult, incoming: GetUsersResult) {
+              const existingUsers = existing ? existing.users : [];
+              const res: GetUsersResult = {
+                success: incoming.success,
+                hasMore: incoming.hasMore,
+                users: [...existingUsers, ...incoming.users]
+              };
+              //console.log(res);
+              return res;
+            }
+          }
+        }
+      }
+    }
+  }),
   credentials: "include"
 });
 

@@ -16,12 +16,12 @@ const User_1 = require("../../entities/User");
 let UsersOptions = class UsersOptions {
 };
 __decorate([
-    type_graphql_1.Field({ nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
     __metadata("design:type", Number)
 ], UsersOptions.prototype, "limit", void 0);
 __decorate([
-    type_graphql_1.Field({ nullable: true }),
-    __metadata("design:type", String)
+    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
 ], UsersOptions.prototype, "cursor", void 0);
 UsersOptions = __decorate([
     type_graphql_1.InputType()
@@ -70,16 +70,16 @@ const handleGetUsers = async (options, ctx) => {
         hasMore: false
     };
     const limit = options.limit || 20;
-    const cursor = options.cursor || "a";
+    const cursor = options.cursor || 1;
     const realLimit = Math.min(50, limit);
     const realLimitPlusOne = realLimit + 1;
     try {
         const users = await typeorm_1.getConnection()
             .getRepository(User_1.User)
             .createQueryBuilder("user")
-            .orderBy("user.username", "DESC")
+            .orderBy("user.id", "ASC")
             .take(realLimitPlusOne)
-            .where("user.username > :cursor", { cursor })
+            .where("user.id > :cursor", { cursor })
             .take(realLimitPlusOne)
             .getMany();
         result.users = users.slice(0, realLimit);
