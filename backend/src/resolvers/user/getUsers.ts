@@ -43,6 +43,8 @@ export const handleGetUsers = async (options: UsersOptions, ctx: MyContext) => {
     users: [],
     hasMore: false
   };
+  const currUserId = ctx.req.session.userId;
+  console.log(currUserId);
   const limit = options.limit || 20;
   const cursor = options.cursor || 1;
 
@@ -55,7 +57,10 @@ export const handleGetUsers = async (options: UsersOptions, ctx: MyContext) => {
       .createQueryBuilder("user")
       .orderBy("user.id", "ASC")
       .take(realLimitPlusOne)
-      .where("user.id > :cursor", { cursor })
+      .where("user.id > :cursor AND user.id != :currUserId", {
+        cursor,
+        currUserId
+      })
       .take(realLimitPlusOne)
       .getMany();
 
@@ -67,6 +72,50 @@ export const handleGetUsers = async (options: UsersOptions, ctx: MyContext) => {
     result.success = false;
     result.errors = [];
     result.errors.push(error.message);
+    return result;
+  }
+};
+
+@InputType()
+export class GetUsersByUsernameInput {
+  @Field()
+  username!: string;
+}
+
+@ObjectType()
+export class GetUsersByUsernameResult {
+  @Field()
+  success!: boolean;
+
+  @Field(() => [String], { nullable: true })
+  errors?: string[];
+
+  @Field(() => [UserProfile])
+  users!: UserProfile[];
+}
+
+export const getUsersByUsername = async (options: GetUsersByUsernameInput) => {
+  const result: GetUsersByUsernameResult = {
+    success: true,
+    users: []
+  };
+
+  const { username } = options;
+
+  try {
+    const users = await getConnection()
+      .getRepository(User)
+      .createQueryBuilder("user")
+      .where("user.username LIKE :username", { username: `%${username}$%` })
+      .getMany();
+
+    if (users) result.users = [...users];
+    return result;
+  } catch (err) {
+    const error = err as Error;
+    result.success = false;
+    result.errors = [];
+    error.message && result.errors.push(error.message);
     return result;
   }
 };

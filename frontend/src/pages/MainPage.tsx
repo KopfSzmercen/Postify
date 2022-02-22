@@ -17,7 +17,7 @@ const MainPage = () => {
         <Logo />
         <Box mt={["0px", "17px"]}>
           <Button colorScheme="yellow" onClick={() => navigate("/login")}>
-            Login
+            Log in
           </Button>
           <Button
             colorScheme="yellow"

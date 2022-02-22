@@ -36,7 +36,7 @@ async function main() {
         maxAge: 1000 * 60 * 60 * 24 * 10 * 40,
         httpOnly: true,
         secure: false,
-        sameSite: "none"
+        sameSite: "lax"
       }
     })
   );

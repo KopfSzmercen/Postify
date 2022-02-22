@@ -1,0 +1,10 @@
+query GetUsersByUsername($username: String!) {
+  getUsersByUsername(options: { username: $username }) {
+    success
+    users {
+      username
+      id
+    }
+    errors
+  }
+}

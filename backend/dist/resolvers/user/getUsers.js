@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleGetUsers = exports.GetUsersResult = exports.UsersOptions = void 0;
+exports.getUsersByUsername = exports.GetUsersByUsernameResult = exports.GetUsersByUsernameInput = exports.handleGetUsers = exports.GetUsersResult = exports.UsersOptions = void 0;
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 const User_1 = require("../../entities/User");
@@ -69,6 +69,8 @@ const handleGetUsers = async (options, ctx) => {
         users: [],
         hasMore: false
     };
+    const currUserId = ctx.req.session.userId;
+    console.log(currUserId);
     const limit = options.limit || 20;
     const cursor = options.cursor || 1;
     const realLimit = Math.min(50, limit);
@@ -79,7 +81,10 @@ const handleGetUsers = async (options, ctx) => {
             .createQueryBuilder("user")
             .orderBy("user.id", "ASC")
             .take(realLimitPlusOne)
-            .where("user.id > :cursor", { cursor })
+            .where("user.id > :cursor AND user.id != :currUserId", {
+            cursor,
+            currUserId
+        })
             .take(realLimitPlusOne)
             .getMany();
         result.users = users.slice(0, realLimit);
@@ -96,3 +101,56 @@ const handleGetUsers = async (options, ctx) => {
     }
 };
 exports.handleGetUsers = handleGetUsers;
+let GetUsersByUsernameInput = class GetUsersByUsernameInput {
+};
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], GetUsersByUsernameInput.prototype, "username", void 0);
+GetUsersByUsernameInput = __decorate([
+    type_graphql_1.InputType()
+], GetUsersByUsernameInput);
+exports.GetUsersByUsernameInput = GetUsersByUsernameInput;
+let GetUsersByUsernameResult = class GetUsersByUsernameResult {
+};
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Boolean)
+], GetUsersByUsernameResult.prototype, "success", void 0);
+__decorate([
+    type_graphql_1.Field(() => [String], { nullable: true }),
+    __metadata("design:type", Array)
+], GetUsersByUsernameResult.prototype, "errors", void 0);
+__decorate([
+    type_graphql_1.Field(() => [UserProfile]),
+    __metadata("design:type", Array)
+], GetUsersByUsernameResult.prototype, "users", void 0);
+GetUsersByUsernameResult = __decorate([
+    type_graphql_1.ObjectType()
+], GetUsersByUsernameResult);
+exports.GetUsersByUsernameResult = GetUsersByUsernameResult;
+const getUsersByUsername = async (options) => {
+    const result = {
+        success: true,
+        users: []
+    };
+    const { username } = options;
+    try {
+        const users = await typeorm_1.getConnection()
+            .getRepository(User_1.User)
+            .createQueryBuilder("user")
+            .where("user.username LIKE :username", { username: `%${username}$%` })
+            .getMany();
+        if (users)
+            result.users = [...users];
+        return result;
+    }
+    catch (err) {
+        const error = err;
+        result.success = false;
+        result.errors = [];
+        error.message && result.errors.push(error.message);
+        return result;
+    }
+};
+exports.getUsersByUsername = getUsersByUsername;

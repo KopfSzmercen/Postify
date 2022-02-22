@@ -14,7 +14,14 @@ import {
   handleManageFriendsRequest,
   ManageFriendsRequestInput
 } from "./friends";
-import { GetUsersResult, handleGetUsers, UsersOptions } from "./getUsers";
+import {
+  getUsersByUsername,
+  GetUsersByUsernameInput,
+  GetUsersByUsernameResult,
+  GetUsersResult,
+  handleGetUsers,
+  UsersOptions
+} from "./getUsers";
 
 @Resolver(User)
 export class UserResolver {
@@ -62,6 +69,13 @@ export class UserResolver {
     @Ctx() context: MyContext
   ): Promise<GetUsersResult> {
     return await handleGetUsers(options, context);
+  }
+
+  @Query(() => GetUsersByUsernameResult)
+  async getUsersByUsername(
+    @Arg("options") options: GetUsersByUsernameInput
+  ): Promise<GetUsersByUsernameResult> {
+    return await getUsersByUsername(options);
   }
 
   @Query(() => String)

@@ -45,6 +45,7 @@ const handleCreateFriendship = async (options, ctx) => {
     };
     //*TODO CHANGE TO SESSION */
     const userId = 46;
+    //const userId = ctx.req.session.userId;
     try {
         if (userId === options.friend) {
             result.success = false;
@@ -185,7 +186,20 @@ const handleManageFriendsRequest = async (options, ctx) => {
     };
     //const { userId } = ctx.req.session;
     const userId = 42;
+    const senderId = options.senderId;
     try {
+        const initialRequest = await typeorm_1.getConnection()
+            .getRepository(Friendship_1.Friendship)
+            .createQueryBuilder("f")
+            .where("f.friend = :userId AND f.user = :senderId", { userId, senderId })
+            .getOne();
+        console.log(initialRequest);
+        if (!initialRequest) {
+            result.errors = [];
+            result.errors.push("Such friends request does not exist");
+            result.success = false;
+            return result;
+        }
         if (options.action === "reject") {
             await typeorm_1.getConnection()
                 .createQueryBuilder()
