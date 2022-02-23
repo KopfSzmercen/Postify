@@ -50,6 +50,14 @@ __decorate([
     __metadata("design:type", Boolean)
 ], LoginResult.prototype, "success", void 0);
 __decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], LoginResult.prototype, "username", void 0);
+__decorate([
+    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
+], LoginResult.prototype, "userId", void 0);
+__decorate([
     type_graphql_1.Field(() => [LoginError]),
     __metadata("design:type", Array)
 ], LoginResult.prototype, "errors", void 0);
@@ -80,6 +88,8 @@ const handleLogin = async (input, context) => {
         loginResult.success = false;
         return loginResult;
     }
+    loginResult.userId = user.id;
+    loginResult.username = user.username;
     context.req.session.userId = user.id;
     return loginResult;
 };

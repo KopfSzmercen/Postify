@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from "type-graphql";
+import { Field, InputType, Int, ObjectType } from "type-graphql";
 import { User } from "../../entities/User";
 import { MyContext } from "../../types";
 import bcrypt from "bcrypt";
@@ -25,6 +25,12 @@ class LoginError {
 export class LoginResult {
   @Field()
   success!: boolean;
+
+  @Field({ nullable: true })
+  username?: string;
+
+  @Field(() => Int, { nullable: true })
+  userId?: number;
 
   @Field(() => [LoginError])
   errors!: LoginError[];
@@ -58,6 +64,8 @@ const handleLogin = async (input: LoginInput, context: MyContext) => {
     return loginResult;
   }
 
+  loginResult.userId = user.id;
+  loginResult.username = user.username;
   context.req.session.userId = user.id;
 
   return loginResult;

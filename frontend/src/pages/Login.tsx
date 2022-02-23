@@ -6,10 +6,12 @@ import { InputField } from "../components/ui/InputField";
 import Logo from "../components/ui/Logo";
 import { LoginDocument, LoginMutation } from "../generated";
 import formatFormErrors from "../utils/formatFormErrors";
+import useStore from "../utils/store/store";
 
 const Login = () => {
   const navigate = useNavigate();
   const [sendLogin] = useMutation<LoginMutation>(LoginDocument);
+  const store = useStore();
 
   return (
     <>
@@ -40,6 +42,8 @@ const Login = () => {
               ) {
                 setErrors(formatFormErrors(response.data.login.errors));
               } else if (response.data?.login.success) {
+                const userId = response.data!.login.userId as number;
+                store.logInUser(userId);
                 navigate("/dashboard", { replace: true });
               }
             }}

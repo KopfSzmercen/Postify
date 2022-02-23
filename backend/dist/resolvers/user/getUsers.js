@@ -12,7 +12,39 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUsersByUsername = exports.GetUsersByUsernameResult = exports.GetUsersByUsernameInput = exports.handleGetUsers = exports.GetUsersResult = exports.UsersOptions = void 0;
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
+const Friendship_1 = require("../../entities/Friendship");
 const User_1 = require("../../entities/User");
+const friendshipStatus = async (currentUserId, secondUserId) => {
+    try {
+        const requestFromUser = await typeorm_1.getConnection()
+            .getRepository(Friendship_1.Friendship)
+            .createQueryBuilder("f")
+            .where("f.user = :currentUserId AND f.friend = :secondUserId", {
+            currentUserId,
+            secondUserId
+        })
+            .getOne();
+        const decisionOfSecondUser = await typeorm_1.getConnection()
+            .getRepository(Friendship_1.Friendship)
+            .createQueryBuilder("f")
+            .where("f.user = :secondUserId AND f.friend = :currentUserId", {
+            secondUserId,
+            currentUserId
+        })
+            .getOne();
+        if (requestFromUser && decisionOfSecondUser)
+            return "ARE FRIENDS";
+        if (requestFromUser && !decisionOfSecondUser)
+            return "PENDING TO";
+        if (!requestFromUser && decisionOfSecondUser)
+            return "PENDING FROM";
+        return "NO REQUEST";
+    }
+    catch (error) {
+        console.log(error);
+        return undefined;
+    }
+};
 let UsersOptions = class UsersOptions {
 };
 __decorate([
@@ -37,6 +69,10 @@ __decorate([
     type_graphql_1.Field(),
     __metadata("design:type", Number)
 ], UserProfile.prototype, "id", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], UserProfile.prototype, "friendshipStatus", void 0);
 UserProfile = __decorate([
     type_graphql_1.ObjectType()
 ], UserProfile);
@@ -87,7 +123,13 @@ const handleGetUsers = async (options, ctx) => {
         })
             .take(realLimitPlusOne)
             .getMany();
-        result.users = users.slice(0, realLimit);
+        const usersWithFriendship = [];
+        for (let i = 0; i < users.length; i++) {
+            const friendship = await friendshipStatus(currUserId, users[i].id);
+            friendship &&
+                usersWithFriendship.push({ ...users[i], friendshipStatus: friendship });
+        }
+        result.users = usersWithFriendship.slice(0, realLimit);
         if (users.length === realLimitPlusOne)
             result.hasMore = true;
         return result;
@@ -129,20 +171,35 @@ GetUsersByUsernameResult = __decorate([
     type_graphql_1.ObjectType()
 ], GetUsersByUsernameResult);
 exports.GetUsersByUsernameResult = GetUsersByUsernameResult;
-const getUsersByUsername = async (options) => {
+const getUsersByUsername = async (options, ctx) => {
     const result = {
         success: true,
         users: []
     };
+    const currUserId = ctx.req.session.userId;
     const { username } = options;
     try {
         const users = await typeorm_1.getConnection()
             .getRepository(User_1.User)
             .createQueryBuilder("user")
-            .where("user.username LIKE :username", { username: `%${username}$%` })
+            .where("user.username LIKE :username AND user.id != :currUserId", {
+            username: `%${username}%`,
+            currUserId
+        })
             .getMany();
-        if (users)
-            result.users = [...users];
+        if (users.length > 0) {
+            const usersWithFriendship = [];
+            console.log("here");
+            for (let i = 0; i < users.length; i++) {
+                const friendship = await friendshipStatus(currUserId, users[i].id);
+                friendship &&
+                    usersWithFriendship.push({
+                        ...users[i],
+                        friendshipStatus: friendship
+                    });
+            }
+            result.users = [...usersWithFriendship];
+        }
         return result;
     }
     catch (err) {

@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from "type-graphql";
+import { Field, InputType, Int, ObjectType } from "type-graphql";
 import { getConnection } from "typeorm";
 import { Friendship } from "../../entities/Friendship";
 import { User } from "../../entities/User";
@@ -6,7 +6,7 @@ import { MyContext } from "../../types";
 
 @InputType()
 export class CreateFriendshipInput {
-  @Field()
+  @Field(() => Int)
   friend!: number;
 }
 
@@ -29,8 +29,8 @@ export const handleCreateFriendship = async (
   };
 
   //*TODO CHANGE TO SESSION */
-  const userId = 46;
-  //const userId = ctx.req.session.userId;
+  //const userId = 46;
+  const userId = ctx.req.session.userId;
 
   try {
     if (userId === options.friend) {
@@ -103,8 +103,8 @@ export class FriendsRequestsResult extends RegularResult {
 }
 
 export const getFriendshipRequest = async (ctx: MyContext) => {
-  //   const { userId } = ctx.req.session;
-  const userId = 42;
+  const { userId } = ctx.req.session;
+  //const userId = 42;
   const result: FriendsRequestsResult = {
     success: true,
     errors: [],
@@ -153,7 +153,7 @@ export const getFriendshipRequest = async (ctx: MyContext) => {
 
 @InputType()
 export class ManageFriendsRequestInput {
-  @Field()
+  @Field(() => Int)
   senderId!: number;
 
   @Field()
@@ -169,8 +169,8 @@ export const handleManageFriendsRequest = async (
     errors: []
   };
 
-  //const { userId } = ctx.req.session;
-  const userId = 42;
+  const { userId } = ctx.req.session;
+  //const userId = 42;
   const senderId = options.senderId;
 
   try {

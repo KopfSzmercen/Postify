@@ -4,6 +4,7 @@ query GetUsersByUsername($username: String!) {
     users {
       username
       id
+      friendshipStatus
     }
     errors
   }

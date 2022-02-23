@@ -1,6 +1,8 @@
 mutation Login($email: String!, $password: String!) {
   login(options: { email: $email, password: $password }) {
     success
+    username
+    userId
     errors {
       field
       message

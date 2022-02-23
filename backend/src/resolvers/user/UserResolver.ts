@@ -73,9 +73,10 @@ export class UserResolver {
 
   @Query(() => GetUsersByUsernameResult)
   async getUsersByUsername(
-    @Arg("options") options: GetUsersByUsernameInput
+    @Arg("options") options: GetUsersByUsernameInput,
+    @Ctx() context: MyContext
   ): Promise<GetUsersByUsernameResult> {
-    return await getUsersByUsername(options);
+    return await getUsersByUsername(options, context);
   }
 
   @Query(() => String)

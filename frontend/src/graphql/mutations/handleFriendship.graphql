@@ -1,0 +1,6 @@
+mutation ManageFriendshipRequest($senderId: Int!, $action: String!) {
+  manageFriendsRequest(options: { senderId: $senderId, action: $action }) {
+    success
+    errors
+  }
+}

@@ -1,7 +1,44 @@
 import { Field, InputType, Int, ObjectType } from "type-graphql";
 import { getConnection } from "typeorm";
+import { Friendship } from "../../entities/Friendship";
 import { User } from "../../entities/User";
 import { MyContext } from "../../types";
+
+const friendshipStatus = async (
+  currentUserId: number,
+  secondUserId: number
+) => {
+  try {
+    const requestFromUser = await getConnection()
+      .getRepository(Friendship)
+      .createQueryBuilder("f")
+      .where("f.user = :currentUserId AND f.friend = :secondUserId", {
+        currentUserId,
+        secondUserId
+      })
+      .getOne();
+
+    const decisionOfSecondUser = await getConnection()
+      .getRepository(Friendship)
+      .createQueryBuilder("f")
+      .where("f.user = :secondUserId AND f.friend = :currentUserId", {
+        secondUserId,
+        currentUserId
+      })
+      .getOne();
+
+    if (requestFromUser && decisionOfSecondUser) return "ARE FRIENDS";
+
+    if (requestFromUser && !decisionOfSecondUser) return "PENDING TO";
+
+    if (!requestFromUser && decisionOfSecondUser) return "PENDING FROM";
+
+    return "NO REQUEST";
+  } catch (error) {
+    console.log(error);
+    return undefined;
+  }
+};
 
 @InputType()
 export class UsersOptions {
@@ -19,6 +56,13 @@ class UserProfile {
 
   @Field()
   id!: number;
+
+  @Field()
+  friendshipStatus!:
+    | "ARE FRIENDS"
+    | "NO REQUEST"
+    | "PENDING FROM"
+    | "PENDING TO";
 }
 
 @ObjectType()
@@ -52,7 +96,7 @@ export const handleGetUsers = async (options: UsersOptions, ctx: MyContext) => {
   const realLimitPlusOne = realLimit + 1;
 
   try {
-    const users = await getConnection()
+    const users: User[] | UserProfile[] = await getConnection()
       .getRepository(User)
       .createQueryBuilder("user")
       .orderBy("user.id", "ASC")
@@ -64,7 +108,15 @@ export const handleGetUsers = async (options: UsersOptions, ctx: MyContext) => {
       .take(realLimitPlusOne)
       .getMany();
 
-    result.users = users.slice(0, realLimit);
+    const usersWithFriendship: UserProfile[] = [];
+
+    for (let i = 0; i < users.length; i++) {
+      const friendship = await friendshipStatus(currUserId, users[i].id);
+      friendship &&
+        usersWithFriendship.push({ ...users[i], friendshipStatus: friendship });
+    }
+
+    result.users = usersWithFriendship.slice(0, realLimit);
     if (users.length === realLimitPlusOne) result.hasMore = true;
     return result;
   } catch (err) {
@@ -94,22 +146,41 @@ export class GetUsersByUsernameResult {
   users!: UserProfile[];
 }
 
-export const getUsersByUsername = async (options: GetUsersByUsernameInput) => {
+export const getUsersByUsername = async (
+  options: GetUsersByUsernameInput,
+  ctx: MyContext
+) => {
   const result: GetUsersByUsernameResult = {
     success: true,
     users: []
   };
-
+  const currUserId = ctx.req.session.userId;
   const { username } = options;
 
   try {
     const users = await getConnection()
       .getRepository(User)
       .createQueryBuilder("user")
-      .where("user.username LIKE :username", { username: `%${username}$%` })
+      .where("user.username LIKE :username AND user.id != :currUserId", {
+        username: `%${username}%`,
+        currUserId
+      })
       .getMany();
 
-    if (users) result.users = [...users];
+    if (users.length > 0) {
+      const usersWithFriendship: UserProfile[] = [];
+      console.log("here");
+      for (let i = 0; i < users.length; i++) {
+        const friendship = await friendshipStatus(currUserId, users[i].id);
+
+        friendship &&
+          usersWithFriendship.push({
+            ...users[i],
+            friendshipStatus: friendship
+          });
+      }
+      result.users = [...usersWithFriendship];
+    }
     return result;
   } catch (err) {
     const error = err as Error;

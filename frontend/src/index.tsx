@@ -10,29 +10,31 @@ import { GetUsersResult } from "./generated";
 import reportWebVitals from "./reportWebVitals";
 import theme from "./utils/theme";
 
-const client = new ApolloClient({
-  uri: "http://localhost:4000/graphql",
-  cache: new InMemoryCache({
-    typePolicies: {
-      Query: {
-        fields: {
-          getUsers: {
-            keyArgs: false,
-            merge(existing: GetUsersResult, incoming: GetUsersResult) {
-              const existingUsers = existing ? existing.users : [];
-              const res: GetUsersResult = {
-                success: incoming.success,
-                hasMore: incoming.hasMore,
-                users: [...existingUsers, ...incoming.users]
-              };
-              //console.log(res);
-              return res;
-            }
+export const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        getUsers: {
+          keyArgs: false,
+          merge(existing: GetUsersResult, incoming: GetUsersResult) {
+            const existingUsers = existing ? existing.users : [];
+            const res: GetUsersResult = {
+              success: incoming.success,
+              hasMore: incoming.hasMore,
+              users: [...existingUsers, ...incoming.users]
+            };
+            //console.log(res);
+            return res;
           }
         }
       }
     }
-  }),
+  }
+});
+
+const client = new ApolloClient({
+  uri: "http://localhost:4000/graphql",
+  cache,
   credentials: "include"
 });
 

@@ -5,6 +5,7 @@ query GetUsers($limit: Int!, $cursor: Int) {
     users {
       id
       username
+      friendshipStatus
     }
   }
 }

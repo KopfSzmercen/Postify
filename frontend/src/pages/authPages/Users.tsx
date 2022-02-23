@@ -24,7 +24,6 @@ const Users: React.FC<{}> = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  console.log(data);
 
   const scrollToTarget = useRef<HTMLDivElement>(null);
   const scrollUp = () => {
@@ -44,7 +43,7 @@ const Users: React.FC<{}> = () => {
         <>
           <Stack mt="30px" align="center" spacing={6}>
             {data?.getUsers.users.map((u) => {
-              return <UserCard id={u.id} username={u.username} key={u.id} />;
+              return <UserCard user={u} key={u.id} />;
             })}
           </Stack>
           <Center>

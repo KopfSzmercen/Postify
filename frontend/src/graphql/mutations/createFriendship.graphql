@@ -1,0 +1,6 @@
+mutation CreateFriendship($friend: Int!) {
+  createFriendship(options: { friend: $friend }) {
+    success
+    errors
+  }
+}

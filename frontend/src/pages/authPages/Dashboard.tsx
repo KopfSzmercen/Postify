@@ -23,7 +23,12 @@ const MainDashboardPage = () => {
 };
 
 const Dashboard = () => {
-  //const { data } = useQuery<SayHiQuery>(SayHiDocument);
+  // const navigate = useNavigate();
+  // const isLoggedIn = useStore((state) => state.isLoggedIn);
+
+  // useEffect(() => {
+  //   if (!isLoggedIn) navigate("/login", { replace: true });
+  // }, [isLoggedIn]);
 
   return (
     <Box>

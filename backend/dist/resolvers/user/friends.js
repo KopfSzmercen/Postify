@@ -17,7 +17,7 @@ const User_1 = require("../../entities/User");
 let CreateFriendshipInput = class CreateFriendshipInput {
 };
 __decorate([
-    type_graphql_1.Field(),
+    type_graphql_1.Field(() => type_graphql_1.Int),
     __metadata("design:type", Number)
 ], CreateFriendshipInput.prototype, "friend", void 0);
 CreateFriendshipInput = __decorate([
@@ -44,8 +44,8 @@ const handleCreateFriendship = async (options, ctx) => {
         errors: []
     };
     //*TODO CHANGE TO SESSION */
-    const userId = 46;
-    //const userId = ctx.req.session.userId;
+    //const userId = 46;
+    const userId = ctx.req.session.userId;
     try {
         if (userId === options.friend) {
             result.success = false;
@@ -121,8 +121,8 @@ FriendsRequestsResult = __decorate([
 ], FriendsRequestsResult);
 exports.FriendsRequestsResult = FriendsRequestsResult;
 const getFriendshipRequest = async (ctx) => {
-    //   const { userId } = ctx.req.session;
-    const userId = 42;
+    const { userId } = ctx.req.session;
+    //const userId = 42;
     const result = {
         success: true,
         errors: [],
@@ -168,7 +168,7 @@ exports.getFriendshipRequest = getFriendshipRequest;
 let ManageFriendsRequestInput = class ManageFriendsRequestInput {
 };
 __decorate([
-    type_graphql_1.Field(),
+    type_graphql_1.Field(() => type_graphql_1.Int),
     __metadata("design:type", Number)
 ], ManageFriendsRequestInput.prototype, "senderId", void 0);
 __decorate([
@@ -184,8 +184,8 @@ const handleManageFriendsRequest = async (options, ctx) => {
         success: true,
         errors: []
     };
-    //const { userId } = ctx.req.session;
-    const userId = 42;
+    const { userId } = ctx.req.session;
+    //const userId = 42;
     const senderId = options.senderId;
     try {
         const initialRequest = await typeorm_1.getConnection()

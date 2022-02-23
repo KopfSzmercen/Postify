@@ -46,7 +46,7 @@ const SearchedUsers: React.FC<{
   return (
     <Stack mt="30px" align="center" spacing={6}>
       {data?.getUsersByUsername.users.map((u) => {
-        return <UserCard id={u.id} username={u.username} key={u.id} />;
+        return <UserCard user={u} key={u.id} />;
       })}
     </Stack>
   );

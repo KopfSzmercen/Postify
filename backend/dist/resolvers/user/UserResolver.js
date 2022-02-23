@@ -43,8 +43,8 @@ let UserResolver = class UserResolver {
     async getUsers(options, context) {
         return await getUsers_1.handleGetUsers(options, context);
     }
-    async getUsersByUsername(options) {
-        return await getUsers_1.getUsersByUsername(options);
+    async getUsersByUsername(options, context) {
+        return await getUsers_1.getUsersByUsername(options, context);
     }
     sayHi() {
         return "Hi";
@@ -99,8 +99,9 @@ __decorate([
 __decorate([
     type_graphql_1.Query(() => getUsers_1.GetUsersByUsernameResult),
     __param(0, type_graphql_1.Arg("options")),
+    __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [getUsers_1.GetUsersByUsernameInput]),
+    __metadata("design:paramtypes", [getUsers_1.GetUsersByUsernameInput, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "getUsersByUsername", null);
 __decorate([
