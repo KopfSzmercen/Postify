@@ -29,9 +29,9 @@ const friendshipStatus = async (
 
     if (requestFromUser && decisionOfSecondUser) return "ARE FRIENDS";
 
-    if (requestFromUser && !decisionOfSecondUser) return "PENDING TO";
+    if (requestFromUser && !decisionOfSecondUser) return "PENDING OUTGOING";
 
-    if (!requestFromUser && decisionOfSecondUser) return "PENDING FROM";
+    if (!requestFromUser && decisionOfSecondUser) return "PENDING INCOMING";
 
     return "NO REQUEST";
   } catch (error) {
@@ -61,8 +61,8 @@ class UserProfile {
   friendshipStatus!:
     | "ARE FRIENDS"
     | "NO REQUEST"
-    | "PENDING FROM"
-    | "PENDING TO";
+    | "PENDING OUTGOING"
+    | "PENDING INCOMING";
 }
 
 @ObjectType()

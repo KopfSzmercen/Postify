@@ -48,7 +48,7 @@ const UserCard: React.FC<{
         </Text>
       )}
 
-      {user.friendshipStatus === "PENDING FROM" && (
+      {user.friendshipStatus === "PENDING INCOMING" && (
         <>
           <Text mt="15px" color="gray.600" ml="3px">
             {user.username} wants to be Your friend
@@ -74,7 +74,7 @@ const UserCard: React.FC<{
         </>
       )}
 
-      {user.friendshipStatus === "PENDING TO" && (
+      {user.friendshipStatus === "PENDING OUTGOING" && (
         <Text mt="15px" color="gray.600" ml="3px">
           Request to {user.username} has been sent
         </Text>

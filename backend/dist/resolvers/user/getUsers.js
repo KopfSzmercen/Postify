@@ -35,9 +35,9 @@ const friendshipStatus = async (currentUserId, secondUserId) => {
         if (requestFromUser && decisionOfSecondUser)
             return "ARE FRIENDS";
         if (requestFromUser && !decisionOfSecondUser)
-            return "PENDING TO";
+            return "PENDING OUTGOING";
         if (!requestFromUser && decisionOfSecondUser)
-            return "PENDING FROM";
+            return "PENDING INCOMING";
         return "NO REQUEST";
     }
     catch (error) {

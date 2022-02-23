@@ -42,7 +42,7 @@ const CreateFriendshipButton: React.FC<{
             id: cache.identify(user),
             fields: {
               friendshipStatus(existing) {
-                existing = "PENDING FROM";
+                existing = "PENDING OUTGOING";
                 return existing;
               }
             }
