@@ -1,12 +1,7 @@
-import { useMutation } from "@apollo/client";
-import { Avatar, Box, Button, Flex, Icon, Stack, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { FaCheck, FaTimes } from "react-icons/fa";
-import {
-  ManageFriendshipRequestDocument,
-  ManageFriendshipRequestMutation
-} from "../../generated";
+import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
+import React from "react";
 import CreateFriendshipButton from "../functionButtons/CreateFriendshipButton";
+import IncomingFriendshipButton from "../functionButtons/IncomingFriendshipButton";
 
 const UserCard: React.FC<{
   user: {
@@ -16,12 +11,6 @@ const UserCard: React.FC<{
     friendshipStatus: string;
   };
 }> = ({ user }) => {
-  const [manageFriendsRequest] = useMutation<ManageFriendshipRequestMutation>(
-    ManageFriendshipRequestDocument
-  );
-
-  const [isLoading, setIsLoading] = useState(false);
-
   return (
     <Box
       w="100%"
@@ -49,29 +38,7 @@ const UserCard: React.FC<{
       )}
 
       {user.friendshipStatus === "PENDING INCOMING" && (
-        <>
-          <Text mt="15px" color="gray.600" ml="3px">
-            {user.username} wants to be Your friend
-          </Text>
-
-          <Stack mt="10px" direction="row" spacing={4}>
-            <Button
-              leftIcon={<Icon as={FaCheck} />}
-              colorScheme="green"
-              variant="solid"
-              isLoading={isLoading}
-            >
-              Accept
-            </Button>
-            <Button
-              rightIcon={<Icon as={FaTimes} />}
-              colorScheme="red"
-              isLoading={isLoading}
-            >
-              Decline
-            </Button>
-          </Stack>
-        </>
+        <IncomingFriendshipButton user={user} />
       )}
 
       {user.friendshipStatus === "PENDING OUTGOING" && (

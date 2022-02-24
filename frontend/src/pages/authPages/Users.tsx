@@ -6,6 +6,7 @@ import {
   Heading,
   Icon,
   IconButton,
+  Progress,
   Stack
 } from "@chakra-ui/react";
 import React, { useRef, useState } from "react";
@@ -16,12 +17,15 @@ import SearchUserInput from "../../components/ui/SearchUserInput";
 import SearchedUsers from "../../components/SearchedUsers";
 
 const Users: React.FC<{}> = () => {
-  const { data, fetchMore } = useQuery<GetUsersQuery>(GetUsersDocument, {
-    variables: {
-      limit: 10,
-      cursor: 1
+  const { data, fetchMore, loading } = useQuery<GetUsersQuery>(
+    GetUsersDocument,
+    {
+      variables: {
+        limit: 10,
+        cursor: 1
+      }
     }
-  });
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
@@ -29,6 +33,21 @@ const Users: React.FC<{}> = () => {
   const scrollUp = () => {
     scrollToTarget.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  console.log(data);
+  if (loading) {
+    return (
+      <Center>
+        <Progress
+          mt="30px"
+          size="xs"
+          isIndeterminate
+          width="100%"
+          maxWidth="300px"
+        />
+      </Center>
+    );
+  }
 
   return (
     <Box p="30px 30px">

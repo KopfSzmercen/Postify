@@ -167,6 +167,7 @@ export const getUsersByUsername = async (
       })
       .getMany();
 
+    console.log(users);
     if (users.length > 0) {
       const usersWithFriendship: UserProfile[] = [];
       console.log("here");

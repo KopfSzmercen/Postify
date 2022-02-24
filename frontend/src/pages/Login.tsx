@@ -17,7 +17,7 @@ const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn) navigate("/dashboard", { replace: true });
-  }, [isLoggedIn]);
+  }, [isLoggedIn, navigate]);
 
   return (
     <>

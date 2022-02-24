@@ -187,6 +187,7 @@ const getUsersByUsername = async (options, ctx) => {
             currUserId
         })
             .getMany();
+        console.log(users);
         if (users.length > 0) {
             const usersWithFriendship = [];
             console.log("here");

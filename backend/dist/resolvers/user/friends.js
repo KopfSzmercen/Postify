@@ -74,6 +74,27 @@ const handleCreateFriendship = async (options, ctx) => {
             result.errors.push(`User with id ${friend} does not exist`);
             return result;
         }
+        const isAlreadySent = await typeorm_1.getConnection()
+            .getRepository(Friendship_1.Friendship)
+            .createQueryBuilder("f")
+            .where("user = :friendId AND friend = :userId", {
+            friendId: options.friend,
+            userId
+        })
+            .getOne();
+        //IF other user already sent invitation accept the friendship
+        if (isAlreadySent) {
+            await typeorm_1.getConnection()
+                .createQueryBuilder()
+                .insert()
+                .into(Friendship_1.Friendship)
+                .values({
+                user: userId,
+                friend: options.friend
+            })
+                .execute();
+            return result;
+        }
         await typeorm_1.getConnection()
             .createQueryBuilder()
             .insert()

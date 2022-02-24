@@ -16,7 +16,11 @@ export const cache = new InMemoryCache({
       fields: {
         getUsers: {
           keyArgs: false,
-          merge(existing: GetUsersResult, incoming: GetUsersResult) {
+          merge(
+            existing: GetUsersResult,
+            incoming: GetUsersResult,
+            { readField }
+          ) {
             const existingUsers = existing ? existing.users : [];
             const res: GetUsersResult = {
               success: incoming.success,
@@ -25,6 +29,26 @@ export const cache = new InMemoryCache({
             };
             //console.log(res);
             return res;
+            // const existingUsers = existing ? existing.users : [];
+            // const merged: any[] = existingUsers ? existingUsers.slice(0) : [];
+
+            // const existingIdSet = new Set(
+            //   merged.map((user) => readField("id", user))
+            // );
+
+            // const incomingUsers = incoming.users.filter((user) => {
+            //   if (!existingIdSet.has(readField("id", user))) return user;
+            // });
+
+            // incomingUsers.forEach((u) => merged.push(u));
+
+            // const res: GetUsersResult = {
+            //   success: incoming.success,
+            //   hasMore: incoming.hasMore,
+            //   users: [...merged]
+            // };
+
+            // return res;
           }
         }
       }

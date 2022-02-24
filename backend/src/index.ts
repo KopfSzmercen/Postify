@@ -10,6 +10,7 @@ import connectDB from "./utils/connectDB";
 import Redis from "ioredis";
 import session from "express-session";
 import connectRedis from "connect-redis";
+import { PostResolver } from "./resolvers/post/PostResolver";
 
 async function main() {
   await connectDB();
@@ -52,7 +53,7 @@ async function main() {
 
   const server = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver],
+      resolvers: [UserResolver, PostResolver],
       validate: false
     }),
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],

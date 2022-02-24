@@ -64,6 +64,29 @@ export const handleCreateFriendship = async (
       return result;
     }
 
+    const isAlreadySent = await getConnection()
+      .getRepository(Friendship)
+      .createQueryBuilder("f")
+      .where("user = :friendId AND friend = :userId", {
+        friendId: options.friend,
+        userId
+      })
+      .getOne();
+
+    //IF other user already sent invitation accept the friendship
+    if (isAlreadySent) {
+      await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(Friendship)
+        .values({
+          user: userId,
+          friend: options.friend
+        })
+        .execute();
+      return result;
+    }
+
     await getConnection()
       .createQueryBuilder()
       .insert()

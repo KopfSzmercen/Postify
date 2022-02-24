@@ -4,10 +4,8 @@ import React, { useState } from "react";
 import { FaPlusSquare } from "react-icons/fa";
 import { cache } from "../..";
 import {
-  CreateFriendshipMutation,
   CreateFriendshipDocument,
-  UserProfile,
-  GetUsersResult
+  CreateFriendshipMutation
 } from "../../generated";
 
 const CreateFriendshipButton: React.FC<{
