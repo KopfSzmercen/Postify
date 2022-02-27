@@ -6,10 +6,14 @@ import handleCreatePost, {
   CreatePostResult
 } from "./createPost";
 import {
+  GetPaginatedPostsInput,
+  GetPaginatedPostsResult,
   GetSinglePostInput,
   GetSinglePostResult,
+  handleGetPaginatedPosts,
   handleGetSinglePost
 } from "./getPosts";
+import handleVote, { VoteInput, VoteResult } from "./vote";
 
 @Resolver(Post)
 export class PostResolver {
@@ -27,5 +31,21 @@ export class PostResolver {
     @Ctx() context: MyContext
   ): Promise<GetSinglePostResult> {
     return await handleGetSinglePost(input, context);
+  }
+
+  @Query(() => GetPaginatedPostsResult)
+  async getPaginatedPosts(
+    @Arg("options") options: GetPaginatedPostsInput,
+    @Ctx() context: MyContext
+  ): Promise<GetPaginatedPostsResult> {
+    return await handleGetPaginatedPosts(options, context);
+  }
+
+  @Mutation(() => VoteResult)
+  async vote(
+    @Arg("options") options: VoteInput,
+    @Ctx() context: MyContext
+  ): Promise<VoteResult> {
+    return await handleVote(options, context);
   }
 }

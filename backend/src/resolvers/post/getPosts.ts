@@ -30,24 +30,109 @@ export const handleGetSinglePost = async (
     errors: []
   };
 
+  const userId = ctx.req.session.userId;
+
   try {
-    const post = await getConnection()
-      .getRepository(Post)
-      .createQueryBuilder("p")
-      .where("p.id = :postId", {
-        postId: input.postId
-      })
-      .leftJoinAndSelect("p.creator", "user")
-      .getOne();
+    const post = await getConnection().query(
+      `
+          select p.*, 
+          json_build_object(
+            'username', u.username,
+            'id', u.id,
+            'email', u.email
+            ) creator,
+          (select value from vote where "userId" = $1 and "postId" = $2) "voteStatus"
+          from post p
+          inner join public.user u on u.id = p."creatorId"
+          where p.id = $2
+        `,
+      [userId, input.postId]
+    );
 
     console.log(post);
 
-    if (!post) {
+    if (post.length < 1) {
       result.success = false;
       result.errors.push(`Post with id ${input.postId} does not exitst`);
       return result;
     }
-    result.post = post;
+    result.post = post[0];
+    return result;
+  } catch (err) {
+    const error = err as Error;
+    if (error.message) result.errors.push(error.message);
+    result.success = false;
+    return result;
+  }
+};
+
+@InputType()
+export class GetPaginatedPostsInput {
+  @Field(() => Int)
+  limit!: number;
+
+  @Field(() => String, { nullable: true })
+  cursor?: string;
+}
+
+@ObjectType()
+export class GetPaginatedPostsResult {
+  @Field()
+  success!: boolean;
+
+  @Field()
+  hasMore!: boolean;
+
+  @Field(() => [Post])
+  posts!: Post[];
+
+  @Field(() => [String])
+  errors!: string[];
+}
+
+export const handleGetPaginatedPosts = async (
+  options: GetPaginatedPostsInput,
+  ctx: MyContext
+) => {
+  const result: GetPaginatedPostsResult = {
+    success: true,
+    posts: [],
+    hasMore: false,
+    errors: []
+  };
+  const userId = 432;
+
+  const cursor = options.cursor
+    ? new Date(parseInt(options.cursor))
+    : new Date(Date.now());
+  const limit = options.limit;
+
+  const realLimit = Math.min(50, limit);
+  const realLimitPlusOne = realLimit + 1;
+
+  const replacements: any[] = [userId, cursor, realLimitPlusOne];
+
+  try {
+    const posts = await getConnection().query(
+      `
+        select p.*, 
+        json_build_object(
+          'username', u.username,
+          'id', u.id,
+          'email', u.email
+          ) creator,
+        (select value from vote where "userId" = $1 and "postId" = p.id) "voteStatus"
+        from post p
+        inner join public.user u on u.id = p."creatorId"
+        ${cursor ? `where p."createdAt" < $2` : ""}
+        order by p."createdAt" DESC
+        limit $3
+      `,
+      replacements
+    );
+
+    result.posts = posts.slice(0, realLimit);
+    if (posts.length === realLimitPlusOne) result.hasMore = true;
     return result;
   } catch (err) {
     const error = err as Error;

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleGetSinglePost = exports.GetSinglePostResult = exports.GetSinglePostInput = void 0;
+exports.handleGetPaginatedPosts = exports.GetPaginatedPostsResult = exports.GetPaginatedPostsInput = exports.handleGetSinglePost = exports.GetSinglePostResult = exports.GetSinglePostInput = void 0;
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 const Post_1 = require("../../entities/Post");
@@ -46,22 +46,27 @@ const handleGetSinglePost = async (input, ctx) => {
         success: true,
         errors: []
     };
+    const userId = ctx.req.session.userId;
     try {
-        const post = await typeorm_1.getConnection()
-            .getRepository(Post_1.Post)
-            .createQueryBuilder("p")
-            .where("p.id = :postId", {
-            postId: input.postId
-        })
-            .leftJoinAndSelect("p.creator", "user")
-            .getOne();
+        const post = await typeorm_1.getConnection().query(`
+          select p.*, 
+          json_build_object(
+            'username', u.username,
+            'id', u.id,
+            'email', u.email
+            ) creator,
+          (select value from vote where "userId" = $1 and "postId" = $2) "voteStatus"
+          from post p
+          inner join public.user u on u.id = p."creatorId"
+          where p.id = $2
+        `, [userId, input.postId]);
         console.log(post);
-        if (!post) {
+        if (post.length < 1) {
             result.success = false;
             result.errors.push(`Post with id ${input.postId} does not exitst`);
             return result;
         }
-        result.post = post;
+        result.post = post[0];
         return result;
     }
     catch (err) {
@@ -73,3 +78,83 @@ const handleGetSinglePost = async (input, ctx) => {
     }
 };
 exports.handleGetSinglePost = handleGetSinglePost;
+let GetPaginatedPostsInput = class GetPaginatedPostsInput {
+};
+__decorate([
+    type_graphql_1.Field(() => type_graphql_1.Int),
+    __metadata("design:type", Number)
+], GetPaginatedPostsInput.prototype, "limit", void 0);
+__decorate([
+    type_graphql_1.Field(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], GetPaginatedPostsInput.prototype, "cursor", void 0);
+GetPaginatedPostsInput = __decorate([
+    type_graphql_1.InputType()
+], GetPaginatedPostsInput);
+exports.GetPaginatedPostsInput = GetPaginatedPostsInput;
+let GetPaginatedPostsResult = class GetPaginatedPostsResult {
+};
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Boolean)
+], GetPaginatedPostsResult.prototype, "success", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Boolean)
+], GetPaginatedPostsResult.prototype, "hasMore", void 0);
+__decorate([
+    type_graphql_1.Field(() => [Post_1.Post]),
+    __metadata("design:type", Array)
+], GetPaginatedPostsResult.prototype, "posts", void 0);
+__decorate([
+    type_graphql_1.Field(() => [String]),
+    __metadata("design:type", Array)
+], GetPaginatedPostsResult.prototype, "errors", void 0);
+GetPaginatedPostsResult = __decorate([
+    type_graphql_1.ObjectType()
+], GetPaginatedPostsResult);
+exports.GetPaginatedPostsResult = GetPaginatedPostsResult;
+const handleGetPaginatedPosts = async (options, ctx) => {
+    const result = {
+        success: true,
+        posts: [],
+        hasMore: false,
+        errors: []
+    };
+    const userId = 432;
+    const cursor = options.cursor
+        ? new Date(parseInt(options.cursor))
+        : new Date(Date.now());
+    const limit = options.limit;
+    const realLimit = Math.min(50, limit);
+    const realLimitPlusOne = realLimit + 1;
+    const replacements = [userId, cursor, realLimitPlusOne];
+    try {
+        const posts = await typeorm_1.getConnection().query(`
+        select p.*, 
+        json_build_object(
+          'username', u.username,
+          'id', u.id,
+          'email', u.email
+          ) creator,
+        (select value from vote where "userId" = $1 and "postId" = p.id) "voteStatus"
+        from post p
+        inner join public.user u on u.id = p."creatorId"
+        ${cursor ? `where p."createdAt" < $2` : ""}
+        order by p."createdAt" DESC
+        limit $3
+      `, replacements);
+        result.posts = posts.slice(0, realLimit);
+        if (posts.length === realLimitPlusOne)
+            result.hasMore = true;
+        return result;
+    }
+    catch (err) {
+        const error = err;
+        if (error.message)
+            result.errors.push(error.message);
+        result.success = false;
+        return result;
+    }
+};
+exports.handleGetPaginatedPosts = handleGetPaginatedPosts;

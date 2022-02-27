@@ -1,0 +1,9 @@
+query GetPaginatedPosts($limit: Int!, $cursor: String) {
+  getPaginatedPosts(options: { limit: $limit, cursor: $cursor }) {
+    success
+    hasMore
+    posts {
+      ...PostFragment
+    }
+  }
+}

@@ -6,7 +6,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
-import { GetUsersResult } from "./generated";
+import { GetPaginatedPostsResult, GetUsersResult } from "./generated";
 import reportWebVitals from "./reportWebVitals";
 import theme from "./utils/theme";
 
@@ -27,28 +27,24 @@ export const cache = new InMemoryCache({
               hasMore: incoming.hasMore,
               users: [...existingUsers, ...incoming.users]
             };
-            //console.log(res);
             return res;
-            // const existingUsers = existing ? existing.users : [];
-            // const merged: any[] = existingUsers ? existingUsers.slice(0) : [];
-
-            // const existingIdSet = new Set(
-            //   merged.map((user) => readField("id", user))
-            // );
-
-            // const incomingUsers = incoming.users.filter((user) => {
-            //   if (!existingIdSet.has(readField("id", user))) return user;
-            // });
-
-            // incomingUsers.forEach((u) => merged.push(u));
-
-            // const res: GetUsersResult = {
-            //   success: incoming.success,
-            //   hasMore: incoming.hasMore,
-            //   users: [...merged]
-            // };
-
-            // return res;
+          }
+        },
+        getPaginatedPosts: {
+          keyArgs: false,
+          merge(
+            existing: GetPaginatedPostsResult,
+            incoming: GetPaginatedPostsResult
+          ) {
+            const existingPosts = existing ? existing.posts : [];
+            const errors = incoming.errors ? [...incoming.errors] : [];
+            const res: GetPaginatedPostsResult = {
+              success: incoming.success,
+              hasMore: incoming.hasMore,
+              posts: [...existingPosts, ...incoming.posts],
+              errors: [...errors]
+            };
+            return res;
           }
         }
       }

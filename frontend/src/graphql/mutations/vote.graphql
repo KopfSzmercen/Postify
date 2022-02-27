@@ -1,0 +1,6 @@
+mutation Vote($postId: Int!, $value: Int!) {
+  vote(options: { postId: $postId, value: $value }) {
+    success
+    errors
+  }
+}

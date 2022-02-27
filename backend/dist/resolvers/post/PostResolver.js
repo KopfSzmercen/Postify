@@ -36,12 +36,19 @@ const type_graphql_1 = require("type-graphql");
 const Post_1 = require("../../entities/Post");
 const createPost_1 = __importStar(require("./createPost"));
 const getPosts_1 = require("./getPosts");
+const vote_1 = __importStar(require("./vote"));
 let PostResolver = class PostResolver {
     async createPost(input, context) {
         return await createPost_1.default(input, context);
     }
     async getSinglePost(input, context) {
         return await getPosts_1.handleGetSinglePost(input, context);
+    }
+    async getPaginatedPosts(options, context) {
+        return await getPosts_1.handleGetPaginatedPosts(options, context);
+    }
+    async vote(options, context) {
+        return await vote_1.default(options, context);
     }
 };
 __decorate([
@@ -60,6 +67,22 @@ __decorate([
     __metadata("design:paramtypes", [getPosts_1.GetSinglePostInput, Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "getSinglePost", null);
+__decorate([
+    type_graphql_1.Query(() => getPosts_1.GetPaginatedPostsResult),
+    __param(0, type_graphql_1.Arg("options")),
+    __param(1, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [getPosts_1.GetPaginatedPostsInput, Object]),
+    __metadata("design:returntype", Promise)
+], PostResolver.prototype, "getPaginatedPosts", null);
+__decorate([
+    type_graphql_1.Mutation(() => vote_1.VoteResult),
+    __param(0, type_graphql_1.Arg("options")),
+    __param(1, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [vote_1.VoteInput, Object]),
+    __metadata("design:returntype", Promise)
+], PostResolver.prototype, "vote", null);
 PostResolver = __decorate([
     type_graphql_1.Resolver(Post_1.Post)
 ], PostResolver);
