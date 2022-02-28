@@ -12,8 +12,34 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Post = void 0;
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
+const Comment_1 = require("./Comment");
 const User_1 = require("./User");
 const Vote_1 = require("./Vote");
+let PaginatedComment = class PaginatedComment {
+};
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Number)
+], PaginatedComment.prototype, "id", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], PaginatedComment.prototype, "text", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], PaginatedComment.prototype, "updatedAt", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], PaginatedComment.prototype, "creatorName", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Number)
+], PaginatedComment.prototype, "creatorId", void 0);
+PaginatedComment = __decorate([
+    type_graphql_1.ObjectType()
+], PaginatedComment);
 let Post = class Post extends typeorm_1.BaseEntity {
 };
 __decorate([
@@ -54,6 +80,18 @@ __decorate([
     typeorm_1.OneToMany(() => Vote_1.Vote, (vote) => vote.post),
     __metadata("design:type", Array)
 ], Post.prototype, "votes", void 0);
+__decorate([
+    typeorm_1.OneToMany(() => Comment_1.Comment, (comment) => comment.post),
+    __metadata("design:type", Array)
+], Post.prototype, "comments", void 0);
+__decorate([
+    type_graphql_1.Field(() => [PaginatedComment], { nullable: true }),
+    __metadata("design:type", Array)
+], Post.prototype, "paginatedComments", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Number)
+], Post.prototype, "commentsNumber", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.CreateDateColumn(),

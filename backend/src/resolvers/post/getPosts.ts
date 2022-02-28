@@ -41,15 +41,32 @@ export const handleGetSinglePost = async (
             'id', u.id,
             'email', u.email
             ) creator,
-          (select value from vote where "userId" = $1 and "postId" = $2) "voteStatus"
+
+          (select value from vote where "userId" = $1 and "postId" = $2) "voteStatus",
+
+          (select count (*) from comment where "postId" = $2) "commentsNumber",
+
+          array (
+
+          select json_build_object (
+            'text', c.text, 
+            'id', c.id, 
+            'updatedAt', c."updatedAt", 
+            'creatorName', username,
+            'creatorId', creat.id )   
+
+          from comment c
+          inner join public.user creat on creat.id = c."userId"
+          where c."postId" = $2
+          limit 5
+          ) "paginatedComments"
+
           from post p
           inner join public.user u on u.id = p."creatorId"
           where p.id = $2
         `,
       [userId, input.postId]
     );
-
-    console.log(post);
 
     if (post.length < 1) {
       result.success = false;
@@ -121,7 +138,8 @@ export const handleGetPaginatedPosts = async (
           'id', u.id,
           'email', u.email
           ) creator,
-        (select value from vote where "userId" = $1 and "postId" = p.id) "voteStatus"
+        (select value from vote where "userId" = $1 and "postId" = p.id) "voteStatus",
+        (select count (*) from comment where "postId" = p.id) "commentsNumber"
         from post p
         inner join public.user u on u.id = p."creatorId"
         ${cursor ? `where p."createdAt" < $2` : ""}

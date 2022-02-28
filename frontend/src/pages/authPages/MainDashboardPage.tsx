@@ -39,6 +39,7 @@ export const MainDashboardPage = () => {
   if (loading) {
     return (
       <Box mt="20px" px="20px" pb="30px">
+        <Box ref={scrollToTarget} position="absolute" top="0"></Box>
         <Center>
           <Progress
             mt="30px"

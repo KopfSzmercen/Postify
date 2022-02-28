@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from "typeorm";
+import { Comment } from "./Comment";
 
 import { Post } from "./Post";
 import { Vote } from "./Vote";
@@ -35,6 +36,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Vote, (vote) => vote.user)
   votes!: Vote[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments!: Comment[];
 
   @Field(() => String)
   @CreateDateColumn()

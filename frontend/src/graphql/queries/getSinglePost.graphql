@@ -1,0 +1,9 @@
+query GetSinglePost($postId: Int!) {
+  getSinglePost(input: { postId: $postId }) {
+    success
+    errors
+    post {
+      ...PostFragment
+    }
+  }
+}

@@ -34,6 +34,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const Post_1 = require("../../entities/Post");
+const comment_1 = require("./comment");
 const createPost_1 = __importStar(require("./createPost"));
 const getPosts_1 = require("./getPosts");
 const vote_1 = __importStar(require("./vote"));
@@ -49,6 +50,9 @@ let PostResolver = class PostResolver {
     }
     async vote(options, context) {
         return await vote_1.default(options, context);
+    }
+    async addComment(input, context) {
+        return await comment_1.handleAddComment(input, context);
     }
 };
 __decorate([
@@ -83,6 +87,14 @@ __decorate([
     __metadata("design:paramtypes", [vote_1.VoteInput, Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "vote", null);
+__decorate([
+    type_graphql_1.Mutation(() => comment_1.AddCommentResult),
+    __param(0, type_graphql_1.Arg("input")),
+    __param(1, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [comment_1.AddCommentInput, Object]),
+    __metadata("design:returntype", Promise)
+], PostResolver.prototype, "addComment", null);
 PostResolver = __decorate([
     type_graphql_1.Resolver(Post_1.Post)
 ], PostResolver);

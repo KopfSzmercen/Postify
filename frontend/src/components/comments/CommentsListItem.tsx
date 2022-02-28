@@ -1,22 +1,22 @@
 import { Avatar, Box, Flex, Stack, Text } from "@chakra-ui/react";
 import React from "react";
+import { PaginatedComment } from "../../generated";
 
-const CommentsListItem = () => {
+const CommentsListItem: React.FC<{ comment: PaginatedComment }> = ({
+  comment
+}) => {
   return (
-    <Box p="10px" border="2px" borderColor="blackAlpha.200" borderRadius="5px">
+    <Box p="15px" bg="whiteAlpha.800" borderRadius="5px">
       <Stack>
         <Flex align="center">
-          <Avatar name="Username" />
+          <Avatar name={comment.creatorName} />
           <Text ml="5px" fontWeight="semibold">
-            Username
+            {comment.creatorName}
           </Text>
         </Flex>
-        <Text>20.02.2022</Text>
+        <Text>{comment.updatedAt.toLocaleUpperCase()}</Text>
       </Stack>
-      <Text mt="10px">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat quia eum
-        corrupti at facilis! Quasi omnis dolor delectus placeat ad?
-      </Text>
+      <Text mt="10px">{comment.text}</Text>
     </Box>
   );
 };

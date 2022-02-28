@@ -1,6 +1,7 @@
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { Post } from "../../entities/Post";
 import { MyContext } from "../../types";
+import { AddCommentInput, AddCommentResult, handleAddComment } from "./comment";
 import handleCreatePost, {
   CreatePostInput,
   CreatePostResult
@@ -47,5 +48,13 @@ export class PostResolver {
     @Ctx() context: MyContext
   ): Promise<VoteResult> {
     return await handleVote(options, context);
+  }
+
+  @Mutation(() => AddCommentResult)
+  async addComment(
+    @Arg("input") input: AddCommentInput,
+    @Ctx() context: MyContext
+  ): Promise<AddCommentResult> {
+    return await handleAddComment(input, context);
   }
 }

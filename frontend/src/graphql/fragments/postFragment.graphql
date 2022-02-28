@@ -6,6 +6,14 @@ fragment PostFragment on Post {
   text
   points
   voteStatus
+  commentsNumber
+  paginatedComments {
+    id
+    text
+    updatedAt
+    creatorName
+    creatorId
+  }
   creator {
     id
     username
