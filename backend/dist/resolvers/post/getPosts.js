@@ -34,6 +34,10 @@ __decorate([
     __metadata("design:type", Array)
 ], GetSinglePostResult.prototype, "errors", void 0);
 __decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Boolean)
+], GetSinglePostResult.prototype, "hasMoreComments", void 0);
+__decorate([
     type_graphql_1.Field(() => Post_1.Post, { nullable: true }),
     __metadata("design:type", Post_1.Post)
 ], GetSinglePostResult.prototype, "post", void 0);
@@ -44,7 +48,8 @@ exports.GetSinglePostResult = GetSinglePostResult;
 const handleGetSinglePost = async (input, ctx) => {
     const result = {
         success: true,
-        errors: []
+        errors: [],
+        hasMoreComments: true
     };
     const userId = ctx.req.session.userId;
     try {
@@ -61,17 +66,17 @@ const handleGetSinglePost = async (input, ctx) => {
           (select count (*) from comment where "postId" = $2) "commentsNumber",
 
           array (
-
           select json_build_object (
             'text', c.text, 
             'id', c.id, 
-            'updatedAt', c."updatedAt", 
+            'updatedAt', to_char(c."updatedAt", 'YYYY.MM.DD HH24:MI'), 
             'creatorName', username,
             'creatorId', creat.id )   
 
           from comment c
           inner join public.user creat on creat.id = c."userId"
           where c."postId" = $2
+          order by c."updatedAt" DESC
           limit 5
           ) "paginatedComments"
 
@@ -84,6 +89,8 @@ const handleGetSinglePost = async (input, ctx) => {
             result.errors.push(`Post with id ${input.postId} does not exitst`);
             return result;
         }
+        if (post[0].paginatedComments.length < 5)
+            result.hasMoreComments = false;
         result.post = post[0];
         return result;
     }

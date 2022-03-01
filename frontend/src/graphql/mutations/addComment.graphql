@@ -2,5 +2,12 @@ mutation AddComment($postId: Int!, $text: String!) {
   addComment(input: { postId: $postId, text: $text }) {
     success
     errors
+    returnedComment {
+      id
+      text
+      updatedAt
+      creatorName
+      creatorId
+    }
   }
 }

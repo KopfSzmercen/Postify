@@ -49,7 +49,8 @@ const Login = () => {
                 setErrors(formatFormErrors(response.data.login.errors));
               } else if (response.data?.login.success) {
                 const userId = response.data!.login.userId as number;
-                store.logInUser(userId);
+                const username = response.data.login.username as string;
+                store.logInUser(userId, username);
                 navigate("/dashboard", { replace: true });
               }
             }}

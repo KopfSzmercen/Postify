@@ -32,26 +32,22 @@ const PostDetailCard = () => {
     {
       variables: {
         postId: parseInt(postId!)
-      }
+      },
+      fetchPolicy: "cache-and-network",
+      nextFetchPolicy: "cache-first"
     }
   );
 
-  console.log(data);
-
   if (loading) {
-    if (loading) {
-      return (
-        <Center>
-          <Progress
-            mt="30px"
-            size="xs"
-            isIndeterminate
-            width="100%"
-            maxWidth="300px"
-          />
-        </Center>
-      );
-    }
+    return (
+      <Progress
+        mt="30px"
+        size="xs"
+        isIndeterminate
+        width="100%"
+        maxWidth="400px"
+      />
+    );
   }
 
   if (!data?.getSinglePost.success) {

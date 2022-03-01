@@ -14,7 +14,7 @@ const CommentsListItem: React.FC<{ comment: PaginatedComment }> = ({
             {comment.creatorName}
           </Text>
         </Flex>
-        <Text>{comment.updatedAt.toLocaleUpperCase()}</Text>
+        <Text>{comment.updatedAt}</Text>
       </Stack>
       <Text mt="10px">{comment.text}</Text>
     </Box>

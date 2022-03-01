@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Post = void 0;
+exports.Post = exports.PaginatedComment = void 0;
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 const Comment_1 = require("./Comment");
@@ -40,6 +40,7 @@ __decorate([
 PaginatedComment = __decorate([
     type_graphql_1.ObjectType()
 ], PaginatedComment);
+exports.PaginatedComment = PaginatedComment;
 let Post = class Post extends typeorm_1.BaseEntity {
 };
 __decorate([

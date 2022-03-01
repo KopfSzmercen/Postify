@@ -48,6 +48,7 @@ const AddCommentSection: React.FC<{ post: PostFragmentFragment }> = ({
             }
           });
           setIsLoading(false);
+
           if (result.data?.addComment.success) {
             inputRef.current!.value = "";
             cache.modify({
@@ -55,6 +56,9 @@ const AddCommentSection: React.FC<{ post: PostFragmentFragment }> = ({
               fields: {
                 commentsNumber(existing) {
                   return existing + 1;
+                },
+                paginatedComments(existing) {
+                  return [...existing, result.data?.addComment.returnedComment];
                 }
               }
             });

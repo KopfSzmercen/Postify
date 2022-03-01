@@ -1,0 +1,14 @@
+query GetMoreComments($postId: Int!, $cursor: String!) {
+  getMoreComments(options: { postId: $postId, cursor: $cursor }) {
+    success
+    errors
+    hasMoreComments
+    paginatedComments {
+      id
+      text
+      updatedAt
+      creatorName
+      creatorId
+    }
+  }
+}

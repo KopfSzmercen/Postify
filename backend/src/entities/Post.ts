@@ -14,7 +14,7 @@ import { User } from "./User";
 import { Vote } from "./Vote";
 
 @ObjectType()
-class PaginatedComment {
+export class PaginatedComment {
   @Field()
   id!: number;
 

@@ -54,6 +54,9 @@ let PostResolver = class PostResolver {
     async addComment(input, context) {
         return await comment_1.handleAddComment(input, context);
     }
+    async getMoreComments(options) {
+        return await comment_1.handleGetMoreComments(options);
+    }
 };
 __decorate([
     type_graphql_1.Mutation(() => createPost_1.CreatePostResult),
@@ -95,6 +98,13 @@ __decorate([
     __metadata("design:paramtypes", [comment_1.AddCommentInput, Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "addComment", null);
+__decorate([
+    type_graphql_1.Query(() => comment_1.GetMoreCommentsResult),
+    __param(0, type_graphql_1.Arg("options")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [comment_1.GetMoreCommentsInput]),
+    __metadata("design:returntype", Promise)
+], PostResolver.prototype, "getMoreComments", null);
 PostResolver = __decorate([
     type_graphql_1.Resolver(Post_1.Post)
 ], PostResolver);

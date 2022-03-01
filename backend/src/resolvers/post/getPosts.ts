@@ -17,6 +17,9 @@ export class GetSinglePostResult {
   @Field(() => [String])
   errors!: string[];
 
+  @Field()
+  hasMoreComments!: boolean;
+
   @Field(() => Post, { nullable: true })
   post?: Post;
 }
@@ -27,7 +30,8 @@ export const handleGetSinglePost = async (
 ) => {
   const result: GetSinglePostResult = {
     success: true,
-    errors: []
+    errors: [],
+    hasMoreComments: true
   };
 
   const userId = ctx.req.session.userId;
@@ -47,17 +51,17 @@ export const handleGetSinglePost = async (
           (select count (*) from comment where "postId" = $2) "commentsNumber",
 
           array (
-
           select json_build_object (
             'text', c.text, 
             'id', c.id, 
-            'updatedAt', c."updatedAt", 
+            'updatedAt', to_char(c."updatedAt", 'YYYY.MM.DD HH24:MI'), 
             'creatorName', username,
             'creatorId', creat.id )   
 
           from comment c
           inner join public.user creat on creat.id = c."userId"
           where c."postId" = $2
+          order by c."updatedAt" DESC
           limit 5
           ) "paginatedComments"
 
@@ -73,7 +77,9 @@ export const handleGetSinglePost = async (
       result.errors.push(`Post with id ${input.postId} does not exitst`);
       return result;
     }
+    if (post[0].paginatedComments.length < 5) result.hasMoreComments = false;
     result.post = post[0];
+
     return result;
   } catch (err) {
     const error = err as Error;
