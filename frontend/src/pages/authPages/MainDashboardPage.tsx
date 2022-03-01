@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import { FaArrowUp, FaPlusCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import PostCard from "../../components/ui/PostCard";
 import {
   GetPaginatedPostsDocument,
@@ -28,13 +29,12 @@ export const MainDashboardPage = () => {
     }
   );
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const scrollToTarget = useRef<HTMLDivElement>(null);
   const scrollUp = () => {
     scrollToTarget.current?.scrollIntoView({ behavior: "smooth" });
   };
-
-  console.log(data);
 
   if (loading) {
     return (
@@ -65,6 +65,7 @@ export const MainDashboardPage = () => {
           aria-label="add-post"
           leftIcon={<Icon as={FaPlusCircle} />}
           colorScheme="pink"
+          onClick={() => navigate("createPost")}
         >
           Add a post
         </Button>

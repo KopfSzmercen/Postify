@@ -29,6 +29,9 @@ export class CreatePostResult {
 
   @Field(() => [CreatePostError])
   errors!: CreatePostError[];
+
+  @Field(() => Post, { nullable: true })
+  returnedPost?: Post;
 }
 
 const handleCreatePost = async (input: CreatePostInput, ctx: MyContext) => {
@@ -39,7 +42,7 @@ const handleCreatePost = async (input: CreatePostInput, ctx: MyContext) => {
 
   const creatorId = ctx.req.session.userId;
 
-  const isValidTitle = isLength(input.title, 5, 25);
+  const isValidTitle = isLength(input.title, 5, 40);
   if (isValidTitle !== true)
     result.errors.push({ field: "password", message: isValidTitle });
 
@@ -52,7 +55,7 @@ const handleCreatePost = async (input: CreatePostInput, ctx: MyContext) => {
   }
 
   try {
-    await getConnection()
+    const newPost = await getConnection()
       .createQueryBuilder()
       .insert()
       .into(Post)
@@ -61,7 +64,29 @@ const handleCreatePost = async (input: CreatePostInput, ctx: MyContext) => {
         text: input.text,
         creatorId
       })
+      .returning("id")
       .execute();
+
+    const newPostId = newPost.raw[0].id;
+    console.log(newPostId);
+
+    const post = await getConnection().query(
+      `
+          select p.*, 
+          json_build_object(
+            'username', u.username,
+            'id', u.id,
+            'email', u.email
+            ) creator,
+          (select value from vote where "userId" = $1 and "postId" = p.id) "voteStatus",
+          (select count (*) from comment where "postId" = p.id) "commentsNumber"
+          from post p
+          inner join public.user u on u.id = p."creatorId"
+          where p.id = $2
+        `,
+      [creatorId, newPostId]
+    );
+    result.returnedPost = { ...post[0] };
     return result;
   } catch (err) {
     const error = err as Error;

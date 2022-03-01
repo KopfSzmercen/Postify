@@ -54,6 +54,10 @@ __decorate([
     type_graphql_1.Field(() => [CreatePostError]),
     __metadata("design:type", Array)
 ], CreatePostResult.prototype, "errors", void 0);
+__decorate([
+    type_graphql_1.Field(() => Post_1.Post, { nullable: true }),
+    __metadata("design:type", Post_1.Post)
+], CreatePostResult.prototype, "returnedPost", void 0);
 CreatePostResult = __decorate([
     type_graphql_1.ObjectType()
 ], CreatePostResult);
@@ -64,7 +68,7 @@ const handleCreatePost = async (input, ctx) => {
         errors: []
     };
     const creatorId = ctx.req.session.userId;
-    const isValidTitle = isLength_1.default(input.title, 5, 25);
+    const isValidTitle = isLength_1.default(input.title, 5, 40);
     if (isValidTitle !== true)
         result.errors.push({ field: "password", message: isValidTitle });
     const isValidText = isLength_1.default(input.text, 5, 5000);
@@ -75,7 +79,7 @@ const handleCreatePost = async (input, ctx) => {
         return result;
     }
     try {
-        await typeorm_1.getConnection()
+        const newPost = await typeorm_1.getConnection()
             .createQueryBuilder()
             .insert()
             .into(Post_1.Post)
@@ -84,7 +88,24 @@ const handleCreatePost = async (input, ctx) => {
             text: input.text,
             creatorId
         })
+            .returning("id")
             .execute();
+        const newPostId = newPost.raw[0].id;
+        console.log(newPostId);
+        const post = await typeorm_1.getConnection().query(`
+          select p.*, 
+          json_build_object(
+            'username', u.username,
+            'id', u.id,
+            'email', u.email
+            ) creator,
+          (select value from vote where "userId" = $1 and "postId" = p.id) "voteStatus",
+          (select count (*) from comment where "postId" = p.id) "commentsNumber"
+          from post p
+          inner join public.user u on u.id = p."creatorId"
+          where p.id = $2
+        `, [creatorId, newPostId]);
+        result.returnedPost = { ...post[0] };
         return result;
     }
     catch (err) {
