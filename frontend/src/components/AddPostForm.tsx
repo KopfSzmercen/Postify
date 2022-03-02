@@ -2,9 +2,13 @@ import { useMutation } from "@apollo/client";
 import { Box, Text, Input, Textarea, Button, Icon } from "@chakra-ui/react";
 import React, { useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import { CreatePostDocument, CreatePostMutation } from "../generated";
-import { cache } from "../index";
-import { GetPaginatedPostsDocument } from "../generated";
+import { useNavigate } from "react-router-dom";
+import { cache } from "..";
+import {
+  CreatePostDocument,
+  CreatePostMutation,
+  PostFragmentFragmentDoc
+} from "../generated";
 
 const AddPostForm = () => {
   const [isTitleError, setIsTitleError] = useState(false);
@@ -13,9 +17,29 @@ const AddPostForm = () => {
   const titleRef = useRef<HTMLInputElement>(null);
   const textRef = useRef<HTMLTextAreaElement>(null);
 
-  const [sendPost, { loading }] =
-    useMutation<CreatePostMutation>(CreatePostDocument);
+  const [sendPost, { loading }] = useMutation<CreatePostMutation>(
+    CreatePostDocument,
+    {
+      update(cache, { data }) {
+        if (data?.createPost.success) {
+          cache.modify({
+            fields: {
+              getPaginatedPosts(existing) {
+                const newPostRef = cache.writeFragment({
+                  data: data?.createPost.returnedPost,
+                  fragment: PostFragmentFragmentDoc
+                });
 
+                return { ...existing, posts: [newPostRef, ...existing.posts] };
+              }
+            }
+          });
+        }
+      }
+    }
+  );
+
+  const navigate = useNavigate();
   return (
     <Box mt="15px" p="10px">
       <Input placeholder="Post title" ref={titleRef} />
@@ -57,6 +81,10 @@ const AddPostForm = () => {
               text: textRef.current!.value
             }
           });
+
+          if (result.data?.createPost.success) {
+            navigate("/dashboard", { replace: true });
+          }
         }}
       >
         Create
