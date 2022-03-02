@@ -78,9 +78,4 @@ export class UserResolver {
   ): Promise<GetUsersByUsernameResult> {
     return await getUsersByUsername(options, context);
   }
-
-  @Query(() => String)
-  sayHi() {
-    return "Hi";
-  }
 }

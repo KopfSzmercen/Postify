@@ -13,6 +13,7 @@ exports.handleManageFriendsRequest = exports.ManageFriendsRequestInput = exports
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 const Friendship_1 = require("../../entities/Friendship");
+const Note_1 = require("../../entities/Note");
 const User_1 = require("../../entities/User");
 let CreateFriendshipInput = class CreateFriendshipInput {
 };
@@ -43,8 +44,6 @@ const handleCreateFriendship = async (options, ctx) => {
         success: true,
         errors: []
     };
-    //*TODO CHANGE TO SESSION */
-    //const userId = 46;
     const userId = ctx.req.session.userId;
     try {
         if (userId === options.friend) {
@@ -91,6 +90,24 @@ const handleCreateFriendship = async (options, ctx) => {
                 .values({
                 user: userId,
                 friend: options.friend
+            })
+                .execute();
+            await typeorm_1.getConnection()
+                .createQueryBuilder()
+                .insert()
+                .into(Note_1.Note)
+                .values({
+                text: `${user.username} and You are friends now!`,
+                userId: friend.id
+            })
+                .execute();
+            await typeorm_1.getConnection()
+                .createQueryBuilder()
+                .insert()
+                .into(Note_1.Note)
+                .values({
+                text: `${friend.username} and You are friends now!`,
+                userId: user.id
             })
                 .execute();
             return result;

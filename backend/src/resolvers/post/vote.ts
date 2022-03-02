@@ -1,5 +1,6 @@
 import { Field, InputType, Int, ObjectType } from "type-graphql";
 import { getConnection } from "typeorm/globals";
+import { Post } from "../../entities/Post";
 import { Vote } from "../../entities/Vote";
 import { MyContext } from "../../types";
 
@@ -17,13 +18,16 @@ export class VoteResult {
   @Field()
   success!: boolean;
 
+  @Field(() => Int, { nullable: true })
+  updatedPoints?: number;
+
   @Field(() => [String])
   errors!: string[];
 }
 
 const handleVote = async (input: VoteInput, ctx: MyContext) => {
-  const isUpdoot = input.value !== -1;
-  const realValue = isUpdoot ? 1 : -1;
+  const isUpvote = input.value !== -1;
+  const realValue = isUpvote ? 1 : -1;
   const { userId } = ctx.req.session;
   const { postId } = input;
 
@@ -39,6 +43,7 @@ const handleVote = async (input: VoteInput, ctx: MyContext) => {
         userId
       }
     });
+    console.log(vote);
     if (vote && vote.value !== realValue) {
       await getConnection().transaction(async (tm) => {
         await tm.query(
@@ -78,6 +83,14 @@ const handleVote = async (input: VoteInput, ctx: MyContext) => {
         );
       });
     }
+    const post = await getConnection()
+      .getRepository(Post)
+      .createQueryBuilder("p")
+      .where("p.id = :postId", { postId })
+      .getOne();
+
+    result.updatedPoints = post?.points;
+
     return result;
   } catch (err) {
     const error = err as Error;

@@ -1,6 +1,7 @@
 import { Field, InputType, Int, ObjectType } from "type-graphql";
 import { getConnection } from "typeorm";
 import { Friendship } from "../../entities/Friendship";
+import { Note } from "../../entities/Note";
 import { User } from "../../entities/User";
 import { MyContext } from "../../types";
 
@@ -28,8 +29,6 @@ export const handleCreateFriendship = async (
     errors: []
   };
 
-  //*TODO CHANGE TO SESSION */
-  //const userId = 46;
   const userId = ctx.req.session.userId;
 
   try {
@@ -84,6 +83,27 @@ export const handleCreateFriendship = async (
           friend: options.friend
         })
         .execute();
+
+      await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(Note)
+        .values({
+          text: `${user.username} and You are friends now!`,
+          userId: friend.id
+        })
+        .execute();
+
+      await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(Note)
+        .values({
+          text: `${friend.username} and You are friends now!`,
+          userId: user.id
+        })
+        .execute();
+
       return result;
     }
 

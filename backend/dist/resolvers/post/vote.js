@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.VoteResult = exports.VoteInput = void 0;
 const type_graphql_1 = require("type-graphql");
 const globals_1 = require("typeorm/globals");
+const Post_1 = require("../../entities/Post");
 const Vote_1 = require("../../entities/Vote");
 let VoteInput = class VoteInput {
 };
@@ -34,6 +35,10 @@ __decorate([
     __metadata("design:type", Boolean)
 ], VoteResult.prototype, "success", void 0);
 __decorate([
+    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
+], VoteResult.prototype, "updatedPoints", void 0);
+__decorate([
     type_graphql_1.Field(() => [String]),
     __metadata("design:type", Array)
 ], VoteResult.prototype, "errors", void 0);
@@ -42,8 +47,8 @@ VoteResult = __decorate([
 ], VoteResult);
 exports.VoteResult = VoteResult;
 const handleVote = async (input, ctx) => {
-    const isUpdoot = input.value !== -1;
-    const realValue = isUpdoot ? 1 : -1;
+    const isUpvote = input.value !== -1;
+    const realValue = isUpvote ? 1 : -1;
     const { userId } = ctx.req.session;
     const { postId } = input;
     const result = {
@@ -57,6 +62,7 @@ const handleVote = async (input, ctx) => {
                 userId
             }
         });
+        console.log(vote);
         if (vote && vote.value !== realValue) {
             await globals_1.getConnection().transaction(async (tm) => {
                 await tm.query(`
@@ -84,6 +90,12 @@ const handleVote = async (input, ctx) => {
         `, [realValue, postId]);
             });
         }
+        const post = await globals_1.getConnection()
+            .getRepository(Post_1.Post)
+            .createQueryBuilder("p")
+            .where("p.id = :postId", { postId })
+            .getOne();
+        result.updatedPoints = post === null || post === void 0 ? void 0 : post.points;
         return result;
     }
     catch (err) {

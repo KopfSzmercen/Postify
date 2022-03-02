@@ -16,6 +16,7 @@ const ioredis_1 = __importDefault(require("ioredis"));
 const express_session_1 = __importDefault(require("express-session"));
 const connect_redis_1 = __importDefault(require("connect-redis"));
 const PostResolver_1 = require("./resolvers/post/PostResolver");
+const NoteResolver_1 = require("./resolvers/note/NoteResolver");
 async function main() {
     await connectDB_1.default();
     const redisClient = new ioredis_1.default();
@@ -47,7 +48,7 @@ async function main() {
     const httpServer = http_1.default.createServer(app);
     const server = new apollo_server_express_1.ApolloServer({
         schema: await type_graphql_1.buildSchema({
-            resolvers: [UserResolver_1.UserResolver, PostResolver_1.PostResolver],
+            resolvers: [UserResolver_1.UserResolver, PostResolver_1.PostResolver, NoteResolver_1.NoteResolver],
             validate: false
         }),
         plugins: [apollo_server_core_1.ApolloServerPluginDrainHttpServer({ httpServer })],

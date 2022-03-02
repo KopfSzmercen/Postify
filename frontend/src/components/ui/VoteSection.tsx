@@ -36,13 +36,12 @@ const VoteSection: React.FC<{
             cache.modify({
               id: cache.identify(post),
               fields: {
-                voteStatus(existing) {
-                  existing = 1;
+                points(existing) {
+                  existing = response.data?.vote.updatedPoints;
                   return existing;
                 },
-                points(existing) {
-                  if (existing === -1) existing = 1;
-                  else existing = existing + 1;
+                voteStatus(existing) {
+                  existing = 1;
                   return existing;
                 }
               }
@@ -70,13 +69,12 @@ const VoteSection: React.FC<{
             cache.modify({
               id: cache.identify(post),
               fields: {
-                voteStatus(existing) {
-                  existing = -1;
+                points(existing) {
+                  existing = response.data?.vote.updatedPoints;
                   return existing;
                 },
-                points(existing) {
-                  if (existing === 1) existing = existing - 2;
-                  else existing = existing - 1;
+                voteStatus(existing) {
+                  existing = -1;
                   return existing;
                 }
               }
