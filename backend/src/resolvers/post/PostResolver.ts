@@ -1,6 +1,7 @@
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { Post } from "../../entities/Post";
 import { MyContext } from "../../types";
+import { RegularResult } from "../user/friends";
 import {
   AddCommentInput,
   AddCommentResult,
@@ -13,6 +14,7 @@ import handleCreatePost, {
   CreatePostInput,
   CreatePostResult
 } from "./createPost";
+import handleEditPost, { EditPostInput } from "./editPost";
 import {
   GetPaginatedPostsInput,
   GetPaginatedPostsResult,
@@ -70,5 +72,13 @@ export class PostResolver {
     @Arg("options") options: GetMoreCommentsInput
   ): Promise<GetMoreCommentsResult> {
     return await handleGetMoreComments(options);
+  }
+
+  @Mutation(() => RegularResult)
+  async editPost(
+    @Arg("input") input: EditPostInput,
+    @Ctx() context: MyContext
+  ): Promise<RegularResult> {
+    return await handleEditPost(input, context);
   }
 }

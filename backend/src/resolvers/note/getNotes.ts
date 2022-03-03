@@ -16,7 +16,7 @@ export class GetNotesResult {
 }
 
 const handleGetNotes = async (ctx: MyContext) => {
-  const userId = ctx.req.session;
+  const userId = ctx.req.session.userId;
   const result: GetNotesResult = {
     success: true,
     notes: []
@@ -25,8 +25,10 @@ const handleGetNotes = async (ctx: MyContext) => {
     const notes = await getConnection()
       .getRepository(Note)
       .createQueryBuilder("n")
-      .where("n.userId = :userId", { userId })
+      .where('n."userId" = :userId', { userId })
       .getMany();
+
+    console.log(notes);
     result.notes = [...notes];
     return result;
   } catch (err) {

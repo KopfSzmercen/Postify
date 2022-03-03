@@ -1,0 +1,9 @@
+query GetNotes {
+  getNotes {
+    success
+    errors
+    notes {
+      ...NoteFragment
+    }
+  }
+}

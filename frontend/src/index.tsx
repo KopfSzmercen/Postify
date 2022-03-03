@@ -18,6 +18,7 @@ export const cache = new InMemoryCache({
           keyArgs: false,
           merge(existing: GetUsersResult, incoming: GetUsersResult) {
             const existingUsers = existing ? existing.users : [];
+
             const res: GetUsersResult = {
               success: incoming.success,
               hasMore: incoming.hasMore,

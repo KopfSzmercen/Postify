@@ -73,6 +73,9 @@ export class Post extends BaseEntity {
   @Field()
   commentsNumber!: number;
 
+  @Field()
+  canEdit!: string;
+
   @Field(() => String)
   @CreateDateColumn()
   createdAt!: Date;

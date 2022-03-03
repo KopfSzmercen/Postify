@@ -3,7 +3,9 @@ import { Route, Routes } from "react-router-dom";
 import AuthNavbar from "../../components/ui/navbar/AuthNavbar";
 import PostDetailCard from "../../components/ui/PostDetailCard";
 import CreatePostPage from "./CreatePostPage";
+import EditPostPage from "./EditPostPage";
 import { MainDashboardPage } from "./MainDashboardPage";
+import Notifications from "./Notifications";
 import PostDetailPage from "./PostDetailPage";
 import Users from "./Users";
 
@@ -24,6 +26,8 @@ const Dashboard = () => {
         <Route path="users" element={<Users />} />
         <Route path="post/:postId" element={<PostDetailPage />} />
         <Route path="createPost" element={<CreatePostPage />} />
+        <Route path="notifications" element={<Notifications />} />
+        <Route path="post/:postId/edit" element={<EditPostPage />} />
       </Routes>
     </Box>
   );

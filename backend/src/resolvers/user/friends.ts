@@ -117,6 +117,16 @@ export const handleCreateFriendship = async (
       })
       .execute();
 
+    await getConnection()
+      .createQueryBuilder()
+      .insert()
+      .into(Note)
+      .values({
+        text: `${user.username} wants to be your friend`,
+        userId: friend.id
+      })
+      .execute();
+
     return result;
   } catch (err) {
     const error = err as any;
@@ -147,7 +157,7 @@ export class FriendsRequestsResult extends RegularResult {
 
 export const getFriendshipRequest = async (ctx: MyContext) => {
   const { userId } = ctx.req.session;
-  //const userId = 42;
+
   const result: FriendsRequestsResult = {
     success: true,
     errors: [],
@@ -213,7 +223,6 @@ export const handleManageFriendsRequest = async (
   };
 
   const { userId } = ctx.req.session;
-  //const userId = 42;
   const senderId = options.senderId;
 
   try {
@@ -222,8 +231,6 @@ export const handleManageFriendsRequest = async (
       .createQueryBuilder("f")
       .where("f.friend = :userId AND f.user = :senderId", { userId, senderId })
       .getOne();
-
-    console.log(initialRequest);
 
     if (!initialRequest) {
       result.errors = [];

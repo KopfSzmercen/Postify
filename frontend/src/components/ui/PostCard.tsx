@@ -1,8 +1,17 @@
-import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Icon,
+  IconButton,
+  Text
+} from "@chakra-ui/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { PostFragmentFragment } from "../../generated";
 import VoteSection from "./VoteSection";
+import { FaEdit } from "react-icons/fa";
 
 const PostCard: React.FC<{
   post: PostFragmentFragment;
@@ -27,6 +36,16 @@ const PostCard: React.FC<{
             <Heading>{post.title}</Heading>
             <Text fontSize="md">{post.creator.username}</Text>
             <Text fontSize="sm">{parsedDate}</Text>
+            {post.canEdit === "true" && (
+              <IconButton
+                mt="5px"
+                aria-label="edit"
+                icon={<Icon ml="4px" as={FaEdit} />}
+                colorScheme="linkedin"
+                fontSize="25px"
+                onClick={() => navigate(`post/${post.id}/edit`)}
+              />
+            )}
           </Box>
           <VoteSection post={post} />
         </Flex>

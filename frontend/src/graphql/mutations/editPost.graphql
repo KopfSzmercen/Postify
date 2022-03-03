@@ -1,0 +1,6 @@
+mutation EditPost($postId: Int!, $text: String!, $title: String!) {
+  editPost(input: { postId: $postId, text: $text, title: $title }) {
+    success
+    errors
+  }
+}

@@ -121,6 +121,15 @@ const handleCreateFriendship = async (options, ctx) => {
             friend: friend.id
         })
             .execute();
+        await typeorm_1.getConnection()
+            .createQueryBuilder()
+            .insert()
+            .into(Note_1.Note)
+            .values({
+            text: `${user.username} wants to be your friend`,
+            userId: friend.id
+        })
+            .execute();
         return result;
     }
     catch (err) {
@@ -160,7 +169,6 @@ FriendsRequestsResult = __decorate([
 exports.FriendsRequestsResult = FriendsRequestsResult;
 const getFriendshipRequest = async (ctx) => {
     const { userId } = ctx.req.session;
-    //const userId = 42;
     const result = {
         success: true,
         errors: [],
@@ -223,7 +231,6 @@ const handleManageFriendsRequest = async (options, ctx) => {
         errors: []
     };
     const { userId } = ctx.req.session;
-    //const userId = 42;
     const senderId = options.senderId;
     try {
         const initialRequest = await typeorm_1.getConnection()
@@ -231,7 +238,6 @@ const handleManageFriendsRequest = async (options, ctx) => {
             .createQueryBuilder("f")
             .where("f.friend = :userId AND f.user = :senderId", { userId, senderId })
             .getOne();
-        console.log(initialRequest);
         if (!initialRequest) {
             result.errors = [];
             result.errors.push("Such friends request does not exist");

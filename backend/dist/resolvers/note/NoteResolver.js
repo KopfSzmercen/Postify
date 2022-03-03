@@ -34,10 +34,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NoteResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const Note_1 = require("../../entities/Note");
+const deleteNote_1 = __importStar(require("./deleteNote"));
 const getNotes_1 = __importStar(require("./getNotes"));
 let NoteResolver = class NoteResolver {
     async getNotes(context) {
         return await getNotes_1.default(context);
+    }
+    async deleteNote(context, input) {
+        return await deleteNote_1.default(input, context);
     }
 };
 __decorate([
@@ -47,6 +51,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], NoteResolver.prototype, "getNotes", null);
+__decorate([
+    type_graphql_1.Mutation(() => deleteNote_1.DeleteNoteResult),
+    __param(0, type_graphql_1.Ctx()),
+    __param(1, type_graphql_1.Arg("input")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, deleteNote_1.DeleteNoteInput]),
+    __metadata("design:returntype", Promise)
+], NoteResolver.prototype, "deleteNote", null);
 NoteResolver = __decorate([
     type_graphql_1.Resolver(Note_1.Note)
 ], NoteResolver);

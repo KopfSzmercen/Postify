@@ -94,6 +94,10 @@ __decorate([
     __metadata("design:type", Number)
 ], Post.prototype, "commentsNumber", void 0);
 __decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], Post.prototype, "canEdit", void 0);
+__decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.CreateDateColumn(),
     __metadata("design:type", Date)

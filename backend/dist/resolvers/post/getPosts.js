@@ -78,8 +78,9 @@ const handleGetSinglePost = async (input, ctx) => {
           where c."postId" = $2
           order by c."updatedAt" DESC
           limit 5
-          ) "paginatedComments"
+          ) "paginatedComments",
 
+          case  when p."creatorId" = $1 then 'true' else 'false' end as "canEdit"
           from post p
           inner join public.user u on u.id = p."creatorId"
           where p.id = $2
@@ -163,13 +164,17 @@ const handleGetPaginatedPosts = async (options, ctx) => {
           'email', u.email
           ) creator,
         (select value from vote where "userId" = $1 and "postId" = p.id) "voteStatus",
-        (select count (*) from comment where "postId" = p.id) "commentsNumber"
+        (select count (*) from comment where "postId" = p.id) "commentsNumber",
+
+        case  when p."creatorId" = $1 then 'true' else 'false' end as "canEdit"
+        
         from post p
         inner join public.user u on u.id = p."creatorId"
         ${cursor ? `where p."createdAt" < $2` : ""}
         order by p."createdAt" DESC
         limit $3
       `, replacements);
+        console.log(posts);
         result.posts = posts.slice(0, realLimit);
         if (posts.length === realLimitPlusOne)
             result.hasMore = true;

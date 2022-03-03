@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Note = void 0;
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
-const Post_1 = require("./Post");
 const User_1 = require("./User");
 let Note = class Note extends typeorm_1.BaseEntity {
 };
@@ -34,12 +33,6 @@ __decorate([
     typeorm_1.ManyToOne(() => User_1.User, (user) => user.votes),
     __metadata("design:type", User_1.User)
 ], Note.prototype, "user", void 0);
-__decorate([
-    typeorm_1.ManyToOne(() => Post_1.Post, (post) => post.votes, {
-        onDelete: "CASCADE"
-    }),
-    __metadata("design:type", Post_1.Post)
-], Note.prototype, "post", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.CreateDateColumn(),

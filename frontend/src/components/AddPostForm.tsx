@@ -17,27 +17,24 @@ const AddPostForm = () => {
   const titleRef = useRef<HTMLInputElement>(null);
   const textRef = useRef<HTMLTextAreaElement>(null);
 
-  const [sendPost, { loading }] = useMutation<CreatePostMutation>(
-    CreatePostDocument,
-    {
-      update(cache, { data }) {
-        if (data?.createPost.success) {
-          cache.modify({
-            fields: {
-              getPaginatedPosts(existing) {
-                const newPostRef = cache.writeFragment({
-                  data: data?.createPost.returnedPost,
-                  fragment: PostFragmentFragmentDoc
-                });
+  const [sendPost] = useMutation<CreatePostMutation>(CreatePostDocument, {
+    update(cache, { data }) {
+      if (data?.createPost.success) {
+        cache.modify({
+          fields: {
+            getPaginatedPosts(existing) {
+              const newPostRef = cache.writeFragment({
+                data: data?.createPost.returnedPost,
+                fragment: PostFragmentFragmentDoc
+              });
 
-                return { ...existing, posts: [newPostRef, ...existing.posts] };
-              }
+              return { ...existing, posts: [newPostRef, ...existing.posts] };
             }
-          });
-        }
+          }
+        });
       }
     }
-  );
+  });
 
   const navigate = useNavigate();
   return (

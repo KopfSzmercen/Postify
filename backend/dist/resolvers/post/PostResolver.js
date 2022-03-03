@@ -34,8 +34,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const Post_1 = require("../../entities/Post");
+const friends_1 = require("../user/friends");
 const comment_1 = require("./comment");
 const createPost_1 = __importStar(require("./createPost"));
+const editPost_1 = __importStar(require("./editPost"));
 const getPosts_1 = require("./getPosts");
 const vote_1 = __importStar(require("./vote"));
 let PostResolver = class PostResolver {
@@ -56,6 +58,9 @@ let PostResolver = class PostResolver {
     }
     async getMoreComments(options) {
         return await comment_1.handleGetMoreComments(options);
+    }
+    async editPost(input, context) {
+        return await editPost_1.default(input, context);
     }
 };
 __decorate([
@@ -105,6 +110,14 @@ __decorate([
     __metadata("design:paramtypes", [comment_1.GetMoreCommentsInput]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "getMoreComments", null);
+__decorate([
+    type_graphql_1.Mutation(() => friends_1.RegularResult),
+    __param(0, type_graphql_1.Arg("input")),
+    __param(1, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [editPost_1.EditPostInput, Object]),
+    __metadata("design:returntype", Promise)
+], PostResolver.prototype, "editPost", null);
 PostResolver = __decorate([
     type_graphql_1.Resolver(Post_1.Post)
 ], PostResolver);

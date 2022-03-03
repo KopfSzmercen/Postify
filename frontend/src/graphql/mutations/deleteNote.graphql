@@ -1,0 +1,6 @@
+mutation DeleteNote($noteId: Int!) {
+  deleteNote(input: { noteId: $noteId }) {
+    success
+    errors
+  }
+}

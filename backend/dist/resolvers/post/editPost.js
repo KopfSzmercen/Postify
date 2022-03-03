@@ -9,50 +9,41 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetNotesResult = void 0;
+exports.EditPostInput = void 0;
 const type_graphql_1 = require("type-graphql");
+const createPost_1 = require("./createPost");
 const typeorm_1 = require("typeorm");
-const Note_1 = require("../../entities/Note");
-let GetNotesResult = class GetNotesResult {
+const Post_1 = require("../../entities/Post");
+let EditPostInput = class EditPostInput extends createPost_1.CreatePostInput {
 };
 __decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", Boolean)
-], GetNotesResult.prototype, "success", void 0);
-__decorate([
-    type_graphql_1.Field(() => [String], { nullable: true }),
-    __metadata("design:type", Array)
-], GetNotesResult.prototype, "errors", void 0);
-__decorate([
-    type_graphql_1.Field(() => [Note_1.Note]),
-    __metadata("design:type", Array)
-], GetNotesResult.prototype, "notes", void 0);
-GetNotesResult = __decorate([
-    type_graphql_1.ObjectType()
-], GetNotesResult);
-exports.GetNotesResult = GetNotesResult;
-const handleGetNotes = async (ctx) => {
-    const userId = ctx.req.session.userId;
+    type_graphql_1.Field(() => type_graphql_1.Int),
+    __metadata("design:type", Number)
+], EditPostInput.prototype, "postId", void 0);
+EditPostInput = __decorate([
+    type_graphql_1.InputType()
+], EditPostInput);
+exports.EditPostInput = EditPostInput;
+const handleEditPost = async (input, ctx) => {
     const result = {
         success: true,
-        notes: []
+        errors: []
     };
     try {
-        const notes = await typeorm_1.getConnection()
-            .getRepository(Note_1.Note)
-            .createQueryBuilder("n")
-            .where('n."userId" = :userId', { userId })
-            .getMany();
-        console.log(notes);
-        result.notes = [...notes];
+        typeorm_1.getConnection()
+            .createQueryBuilder()
+            .update(Post_1.Post)
+            .set({ title: input.title, text: input.text })
+            .where("id = :postId", { postId: input.postId })
+            .execute();
         return result;
     }
     catch (err) {
         const error = err;
         if (error.message)
-            result.errors = [error.message];
+            result.errors.push(error.message);
         result.success = false;
         return result;
     }
 };
-exports.default = handleGetNotes;
+exports.default = handleEditPost;
