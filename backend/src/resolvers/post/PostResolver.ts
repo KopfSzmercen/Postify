@@ -14,6 +14,7 @@ import handleCreatePost, {
   CreatePostInput,
   CreatePostResult
 } from "./createPost";
+import handleDeletePost, { DeletePostInput } from "./deletePost";
 import handleEditPost, { EditPostInput } from "./editPost";
 import {
   GetPaginatedPostsInput,
@@ -80,5 +81,12 @@ export class PostResolver {
     @Ctx() context: MyContext
   ): Promise<RegularResult> {
     return await handleEditPost(input, context);
+  }
+
+  @Mutation(() => RegularResult)
+  async deletePost(
+    @Arg("input") input: DeletePostInput
+  ): Promise<RegularResult> {
+    return await handleDeletePost(input);
   }
 }

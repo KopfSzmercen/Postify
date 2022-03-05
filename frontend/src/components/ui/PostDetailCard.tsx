@@ -7,7 +7,8 @@ import {
   Icon,
   IconButton,
   Progress,
-  Text
+  Text,
+  useDisclosure
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -17,11 +18,14 @@ import {
 } from "../../generated";
 import CommentsList from "../comments/CommentsList";
 import VoteSection from "./VoteSection";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaEdit } from "react-icons/fa";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
+import { ImBin2 } from "react-icons/im";
 
 const PostDetailCard = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   if (!postId) {
     navigate("/");
@@ -78,6 +82,12 @@ const PostDetailCard = () => {
 
   return (
     <Box shadow="lg" borderRadius="5px" w="100%" maxW="600px" bg="white">
+      <ConfirmDeleteModal
+        onClose={onClose}
+        onOpen={onOpen}
+        isOpen={isOpen}
+        post={post}
+      />
       <Box p="15px">
         <IconButton
           aria-label="go-back"
@@ -93,6 +103,27 @@ const PostDetailCard = () => {
             <Heading>{post?.title}</Heading>
             <Text fontSize="md">{post?.creator.username}</Text>
             <Text fontSize="sm">{parsedDate}</Text>
+            {post.canEdit === "true" && (
+              <>
+                {" "}
+                <IconButton
+                  mt="5px"
+                  aria-label="edit"
+                  icon={<Icon ml="4px" as={FaEdit} />}
+                  colorScheme="linkedin"
+                  fontSize="25px"
+                  onClick={() => navigate(`/dashboard/post/${post.id}/edit`)}
+                />
+                <IconButton
+                  ml="20px"
+                  mt="5px"
+                  colorScheme="red"
+                  aria-label="delete"
+                  icon={<Icon as={ImBin2} />}
+                  onClick={onOpen}
+                />
+              </>
+            )}
           </Box>
           <VoteSection post={post} />
         </Flex>

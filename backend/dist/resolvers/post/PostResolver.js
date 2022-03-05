@@ -37,6 +37,7 @@ const Post_1 = require("../../entities/Post");
 const friends_1 = require("../user/friends");
 const comment_1 = require("./comment");
 const createPost_1 = __importStar(require("./createPost"));
+const deletePost_1 = __importStar(require("./deletePost"));
 const editPost_1 = __importStar(require("./editPost"));
 const getPosts_1 = require("./getPosts");
 const vote_1 = __importStar(require("./vote"));
@@ -61,6 +62,9 @@ let PostResolver = class PostResolver {
     }
     async editPost(input, context) {
         return await editPost_1.default(input, context);
+    }
+    async deletePost(input) {
+        return await deletePost_1.default(input);
     }
 };
 __decorate([
@@ -118,6 +122,13 @@ __decorate([
     __metadata("design:paramtypes", [editPost_1.EditPostInput, Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "editPost", null);
+__decorate([
+    type_graphql_1.Mutation(() => friends_1.RegularResult),
+    __param(0, type_graphql_1.Arg("input")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [deletePost_1.DeletePostInput]),
+    __metadata("design:returntype", Promise)
+], PostResolver.prototype, "deletePost", null);
 PostResolver = __decorate([
     type_graphql_1.Resolver(Post_1.Post)
 ], PostResolver);

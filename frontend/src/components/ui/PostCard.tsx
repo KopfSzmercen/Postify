@@ -5,13 +5,16 @@ import {
   Heading,
   Icon,
   IconButton,
-  Text
+  Text,
+  useDisclosure
 } from "@chakra-ui/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { PostFragmentFragment } from "../../generated";
 import VoteSection from "./VoteSection";
 import { FaEdit } from "react-icons/fa";
+import { ImBin2 } from "react-icons/im";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
 
 const PostCard: React.FC<{
   post: PostFragmentFragment;
@@ -19,6 +22,8 @@ const PostCard: React.FC<{
   const parsedDate = new Date(parseInt(post.createdAt))
     .toISOString()
     .substring(0, 10);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const navigate = useNavigate();
   return (
@@ -30,6 +35,12 @@ const PostCard: React.FC<{
       maxW="600px"
       bg="white"
     >
+      <ConfirmDeleteModal
+        onClose={onClose}
+        onOpen={onOpen}
+        isOpen={isOpen}
+        post={post}
+      />
       <Box>
         <Flex p="5px" dir="column" justify="space-between">
           <Box>
@@ -37,14 +48,25 @@ const PostCard: React.FC<{
             <Text fontSize="md">{post.creator.username}</Text>
             <Text fontSize="sm">{parsedDate}</Text>
             {post.canEdit === "true" && (
-              <IconButton
-                mt="5px"
-                aria-label="edit"
-                icon={<Icon ml="4px" as={FaEdit} />}
-                colorScheme="linkedin"
-                fontSize="25px"
-                onClick={() => navigate(`post/${post.id}/edit`)}
-              />
+              <>
+                <IconButton
+                  mt="5px"
+                  aria-label="edit"
+                  icon={<Icon ml="4px" as={FaEdit} />}
+                  colorScheme="linkedin"
+                  fontSize="25px"
+                  onClick={() => navigate(`post/${post.id}/edit`)}
+                />
+
+                <IconButton
+                  ml="20px"
+                  mt="5px"
+                  colorScheme="red"
+                  aria-label="delete"
+                  icon={<Icon as={ImBin2} />}
+                  onClick={onOpen}
+                />
+              </>
             )}
           </Box>
           <VoteSection post={post} />

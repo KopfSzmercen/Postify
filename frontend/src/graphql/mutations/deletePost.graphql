@@ -1,0 +1,6 @@
+mutation DeletePost($postId: Int!) {
+  deletePost(input: { postId: $postId }) {
+    success
+    errors
+  }
+}

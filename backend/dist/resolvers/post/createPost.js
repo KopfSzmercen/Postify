@@ -100,7 +100,8 @@ const handleCreatePost = async (input, ctx) => {
             'email', u.email
             ) creator,
           (select value from vote where "userId" = $1 and "postId" = p.id) "voteStatus",
-          (select count (*) from comment where "postId" = p.id) "commentsNumber"
+          (select count (*) from comment where "postId" = p.id) "commentsNumber",
+          case  when p."creatorId" = $1 then 'true' else 'false' end as "canEdit"
           from post p
           inner join public.user u on u.id = p."creatorId"
           where p.id = $2

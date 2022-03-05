@@ -26,7 +26,7 @@ const EditPostForm: React.FC<{ post: PostFragmentFragment }> = ({ post }) => {
 
   return (
     <Center
-      w="100%"
+      w="90%"
       maxW="500px"
       bg="whiteAlpha.900"
       borderRadius="5px"
