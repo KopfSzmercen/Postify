@@ -58,7 +58,9 @@ export class Post extends BaseEntity {
   creatorId!: number;
 
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.posts, {
+    onDelete: "CASCADE"
+  })
   creator!: User;
 
   @OneToMany(() => Vote, (vote) => vote.post)

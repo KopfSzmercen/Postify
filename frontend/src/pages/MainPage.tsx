@@ -1,17 +1,10 @@
 import { Box, Button, SimpleGrid, Text, Flex, Image } from "@chakra-ui/react";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../components/ui/Logo";
 import people from "../images/people.svg";
-import useStore from "../utils/store/store";
 
 const MainPage = () => {
   const navigate = useNavigate();
-  const isLoggedIn = useStore((state) => state.isLoggedIn);
-
-  useEffect(() => {
-    if (isLoggedIn) navigate("/dashboard", { replace: true });
-  }, [isLoggedIn]);
 
   return (
     <Box minHeight="100vh">

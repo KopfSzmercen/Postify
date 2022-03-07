@@ -1,5 +1,13 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware
+} from "type-graphql";
 import { Post } from "../../entities/Post";
+import isAuth from "../../middleware/isAuth";
 import { MyContext } from "../../types";
 import { RegularResult } from "../user/friends";
 import {
@@ -29,6 +37,7 @@ import handleVote, { VoteInput, VoteResult } from "./vote";
 @Resolver(Post)
 export class PostResolver {
   @Mutation(() => CreatePostResult)
+  @UseMiddleware(isAuth)
   async createPost(
     @Arg("input") input: CreatePostInput,
     @Ctx() context: MyContext
@@ -37,6 +46,7 @@ export class PostResolver {
   }
 
   @Query(() => GetSinglePostResult)
+  @UseMiddleware(isAuth)
   async getSinglePost(
     @Arg("input") input: GetSinglePostInput,
     @Ctx() context: MyContext
@@ -45,6 +55,7 @@ export class PostResolver {
   }
 
   @Query(() => GetPaginatedPostsResult)
+  @UseMiddleware(isAuth)
   async getPaginatedPosts(
     @Arg("options") options: GetPaginatedPostsInput,
     @Ctx() context: MyContext
@@ -53,6 +64,7 @@ export class PostResolver {
   }
 
   @Mutation(() => VoteResult)
+  @UseMiddleware(isAuth)
   async vote(
     @Arg("options") options: VoteInput,
     @Ctx() context: MyContext
@@ -61,6 +73,7 @@ export class PostResolver {
   }
 
   @Mutation(() => AddCommentResult)
+  @UseMiddleware(isAuth)
   async addComment(
     @Arg("input") input: AddCommentInput,
     @Ctx() context: MyContext
@@ -69,6 +82,7 @@ export class PostResolver {
   }
 
   @Query(() => GetMoreCommentsResult)
+  @UseMiddleware(isAuth)
   async getMoreComments(
     @Arg("options") options: GetMoreCommentsInput
   ): Promise<GetMoreCommentsResult> {
@@ -76,6 +90,7 @@ export class PostResolver {
   }
 
   @Mutation(() => RegularResult)
+  @UseMiddleware(isAuth)
   async editPost(
     @Arg("input") input: EditPostInput,
     @Ctx() context: MyContext
@@ -84,6 +99,7 @@ export class PostResolver {
   }
 
   @Mutation(() => RegularResult)
+  @UseMiddleware(isAuth)
   async deletePost(
     @Arg("input") input: DeletePostInput
   ): Promise<RegularResult> {

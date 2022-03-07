@@ -35,7 +35,9 @@ __decorate([
     __metadata("design:type", Number)
 ], Comment.prototype, "postId", void 0);
 __decorate([
-    typeorm_1.ManyToOne(() => User_1.User, (user) => user.votes),
+    typeorm_1.ManyToOne(() => User_1.User, (user) => user.votes, {
+        onDelete: "CASCADE"
+    }),
     __metadata("design:type", User_1.User)
 ], Comment.prototype, "user", void 0);
 __decorate([

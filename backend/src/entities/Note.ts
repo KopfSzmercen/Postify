@@ -29,6 +29,11 @@ export class Note extends BaseEntity {
   @ManyToOne(() => User, (user) => user.votes)
   user!: User;
 
+  @ManyToOne(() => User, (user) => user.notes, {
+    onDelete: "CASCADE"
+  })
+  post!: Note;
+
   @Field(() => String)
   @CreateDateColumn()
   createdAt!: Date;

@@ -30,10 +30,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NoteResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const Note_1 = require("../../entities/Note");
+const isAuth_1 = __importDefault(require("../../middleware/isAuth"));
 const deleteNote_1 = __importStar(require("./deleteNote"));
 const getNotes_1 = __importStar(require("./getNotes"));
 let NoteResolver = class NoteResolver {
@@ -46,6 +50,7 @@ let NoteResolver = class NoteResolver {
 };
 __decorate([
     type_graphql_1.Query(() => getNotes_1.GetNotesResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -53,6 +58,7 @@ __decorate([
 ], NoteResolver.prototype, "getNotes", null);
 __decorate([
     type_graphql_1.Mutation(() => deleteNote_1.DeleteNoteResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Ctx()),
     __param(1, type_graphql_1.Arg("input")),
     __metadata("design:type", Function),

@@ -1,25 +1,16 @@
 import { useMutation } from "@apollo/client";
 import { Box, Button, Text } from "@chakra-ui/react";
-import { Formik, Form } from "formik";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Form, Formik } from "formik";
+import { useState } from "react";
 import { InputField } from "../components/ui/InputField";
 import Logo from "../components/ui/Logo";
 import RegisterFormDialog from "../components/ui/RegisterFormDialog";
 import { RegisterDocument, RegisterMutation } from "../generated";
 import formatFormErrors from "../utils/formatFormErrors";
-import useStore from "../utils/store/store";
 
 const Register = () => {
   const [sendRegiser] = useMutation<RegisterMutation>(RegisterDocument);
   const [isRegisterSuccess, setIsRegisterSuccess] = useState(false);
-
-  const navigate = useNavigate();
-  const isLoggedIn = useStore((state) => state.isLoggedIn);
-
-  useEffect(() => {
-    if (isLoggedIn) navigate("/dashboard", { replace: true });
-  }, [isLoggedIn]);
 
   return (
     <>

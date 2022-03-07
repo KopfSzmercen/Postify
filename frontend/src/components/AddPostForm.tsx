@@ -1,9 +1,8 @@
 import { useMutation } from "@apollo/client";
-import { Box, Text, Input, Textarea, Button, Icon } from "@chakra-ui/react";
-import React, { useRef, useState } from "react";
+import { Box, Button, Icon, Input, Text, Textarea } from "@chakra-ui/react";
+import { useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { cache } from "..";
 import {
   CreatePostDocument,
   CreatePostMutation,

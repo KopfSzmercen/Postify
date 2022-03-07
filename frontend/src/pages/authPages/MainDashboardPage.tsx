@@ -23,7 +23,7 @@ export const MainDashboardPage = () => {
     GetPaginatedPostsDocument,
     {
       variables: {
-        limit: 10,
+        limit: 5,
         cursor: null
       }
     }

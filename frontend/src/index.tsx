@@ -1,4 +1,9 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloProvider,
+  InMemoryCache,
+  makeVar
+} from "@apollo/client";
 import { ChakraProvider } from "@chakra-ui/react";
 import "@fontsource/open-sans/700.css";
 import "@fontsource/raleway/400.css";
@@ -9,6 +14,8 @@ import App from "./App";
 import { GetPaginatedPostsResult, GetUsersResult } from "./generated";
 import reportWebVitals from "./reportWebVitals";
 import theme from "./utils/theme";
+
+export const myUsernameVar = makeVar("");
 
 export const cache = new InMemoryCache({
   typePolicies: {
@@ -42,6 +49,11 @@ export const cache = new InMemoryCache({
               errors: [...errors]
             };
             return res;
+          }
+        },
+        myUsername: {
+          read() {
+            return myUsernameVar();
           }
         }
       }

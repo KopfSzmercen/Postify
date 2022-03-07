@@ -24,7 +24,43 @@ const login_1 = require("./login");
 const login_2 = __importDefault(require("./login"));
 const friends_1 = require("./friends");
 const getUsers_1 = require("./getUsers");
+const logout_1 = __importDefault(require("./logout"));
+const isAuth_1 = __importDefault(require("../../middleware/isAuth"));
+const typeorm_1 = require("typeorm");
+let MeResult = class MeResult {
+};
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Boolean)
+], MeResult.prototype, "success", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], MeResult.prototype, "username", void 0);
+MeResult = __decorate([
+    type_graphql_1.ObjectType()
+], MeResult);
 let UserResolver = class UserResolver {
+    async me(context) {
+        const result = { success: true };
+        if (!context.req.session.userId) {
+            result.success = false;
+            return result;
+        }
+        const user = await typeorm_1.getConnection()
+            .getRepository(User_1.User)
+            .createQueryBuilder("user")
+            .where("user.id = :userId", {
+            userId: context.req.session.userId
+        })
+            .getOne();
+        if (!user) {
+            result.success = false;
+            return result;
+        }
+        result.username = user.username;
+        return result;
+    }
     async register(options) {
         return await register_2.default(options);
     }
@@ -46,7 +82,17 @@ let UserResolver = class UserResolver {
     async getUsersByUsername(options, context) {
         return await getUsers_1.getUsersByUsername(options, context);
     }
+    logout(context) {
+        return logout_1.default(context);
+    }
 };
+__decorate([
+    type_graphql_1.Query(() => MeResult),
+    __param(0, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "me", null);
 __decorate([
     type_graphql_1.Mutation(() => register_1.RegisterResult),
     __param(0, type_graphql_1.Arg("options")),
@@ -64,6 +110,7 @@ __decorate([
 ], UserResolver.prototype, "login", null);
 __decorate([
     type_graphql_1.Mutation(() => friends_1.RegularResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Arg("options")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
@@ -72,6 +119,7 @@ __decorate([
 ], UserResolver.prototype, "createFriendship", null);
 __decorate([
     type_graphql_1.Query(() => friends_1.FriendsRequestsResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -79,6 +127,7 @@ __decorate([
 ], UserResolver.prototype, "queryFriendsRequests", null);
 __decorate([
     type_graphql_1.Mutation(() => friends_1.RegularResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Arg("options")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
@@ -87,6 +136,7 @@ __decorate([
 ], UserResolver.prototype, "manageFriendsRequest", null);
 __decorate([
     type_graphql_1.Query(() => getUsers_1.GetUsersResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Arg("options")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
@@ -95,12 +145,21 @@ __decorate([
 ], UserResolver.prototype, "getUsers", null);
 __decorate([
     type_graphql_1.Query(() => getUsers_1.GetUsersByUsernameResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Arg("options")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [getUsers_1.GetUsersByUsernameInput, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "getUsersByUsername", null);
+__decorate([
+    type_graphql_1.Mutation(() => Boolean),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
+    __param(0, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UserResolver.prototype, "logout", null);
 UserResolver = __decorate([
     type_graphql_1.Resolver(User_1.User)
 ], UserResolver);

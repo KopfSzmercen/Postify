@@ -34,7 +34,6 @@ const Users: React.FC<{}> = () => {
     scrollToTarget.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  console.log(data);
   if (loading) {
     return (
       <Center>

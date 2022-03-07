@@ -34,6 +34,12 @@ __decorate([
     __metadata("design:type", User_1.User)
 ], Note.prototype, "user", void 0);
 __decorate([
+    typeorm_1.ManyToOne(() => User_1.User, (user) => user.notes, {
+        onDelete: "CASCADE"
+    }),
+    __metadata("design:type", Note)
+], Note.prototype, "post", void 0);
+__decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.CreateDateColumn(),
     __metadata("design:type", Date)

@@ -147,7 +147,7 @@ const handleGetPaginatedPosts = async (options, ctx) => {
         hasMore: false,
         errors: []
     };
-    const userId = 432;
+    const userId = ctx.req.session.userId;
     const cursor = options.cursor
         ? new Date(parseInt(options.cursor))
         : new Date(Date.now());
@@ -165,8 +165,7 @@ const handleGetPaginatedPosts = async (options, ctx) => {
           ) creator,
         (select value from vote where "userId" = $1 and "postId" = p.id) "voteStatus",
         (select count (*) from comment where "postId" = p.id) "commentsNumber",
-
-        case  when p."creatorId" = $1 then 'true' else 'false' end as "canEdit"
+        (case when p."creatorId" = $1 then 'true' else 'false' end) "canEdit"
         
         from post p
         inner join public.user u on u.id = p."creatorId"
@@ -174,7 +173,6 @@ const handleGetPaginatedPosts = async (options, ctx) => {
         order by p."createdAt" DESC
         limit $3
       `, replacements);
-        console.log(posts);
         result.posts = posts.slice(0, realLimit);
         if (posts.length === realLimitPlusOne)
             result.hasMore = true;

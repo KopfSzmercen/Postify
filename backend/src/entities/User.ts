@@ -9,6 +9,7 @@ import {
   UpdateDateColumn
 } from "typeorm";
 import { Comment } from "./Comment";
+import { Note } from "./Note";
 
 import { Post } from "./Post";
 import { Vote } from "./Vote";
@@ -39,6 +40,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments!: Comment[];
+
+  @OneToMany(() => Note, (note) => note.user)
+  notes!: Note[];
 
   @Field(() => String)
   @CreateDateColumn()

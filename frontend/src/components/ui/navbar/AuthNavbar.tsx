@@ -18,9 +18,16 @@ import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import Logo from "../Logo";
 import Links from "./Links";
 import { FaArrowCircleRight } from "react-icons/fa";
+import { useMutation, useReactiveVar } from "@apollo/client";
+import { LogoutDocument, LogoutMutation } from "../../../generated";
+import { useNavigate } from "react-router-dom";
+import { myUsernameVar } from "../../..";
 
 export default function AuthNavbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [logout] = useMutation<LogoutMutation>(LogoutDocument);
+  const navigate = useNavigate();
+  const myUsername = useReactiveVar(myUsernameVar);
 
   return (
     <>
@@ -54,15 +61,17 @@ export default function AuthNavbar() {
                 cursor={"pointer"}
                 minW={0}
               >
-                <Avatar
-                  size={"md"}
-                  src={
-                    "https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
-                  }
-                />
+                <Avatar size={"md"} name={myUsername} />
               </MenuButton>
               <MenuList>
-                <MenuItem>
+                <MenuItem
+                  onClick={async () => {
+                    const response = await logout();
+                    if (response.data?.logout) {
+                      navigate("/", { replace: true });
+                    }
+                  }}
+                >
                   <Icon
                     as={FaArrowCircleRight}
                     fontSize="25px"

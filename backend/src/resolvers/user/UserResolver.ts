@@ -1,4 +1,13 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Field,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+  UseMiddleware
+} from "type-graphql";
 import { User } from "../../entities/User";
 import { RegisterInput, RegisterResult } from "./register";
 import handleRegister from "./register";
@@ -22,9 +31,44 @@ import {
   handleGetUsers,
   UsersOptions
 } from "./getUsers";
+import handleLogout from "./logout";
+import isAuth from "../../middleware/isAuth";
+import { getConnection } from "typeorm";
+
+@ObjectType()
+class MeResult {
+  @Field()
+  success!: boolean;
+
+  @Field({ nullable: true })
+  username?: string;
+}
 
 @Resolver(User)
 export class UserResolver {
+  @Query(() => MeResult)
+  async me(@Ctx() context: MyContext): Promise<MeResult> {
+    const result: MeResult = { success: true };
+    if (!context.req.session.userId) {
+      result.success = false;
+      return result;
+    }
+    const user = await getConnection()
+      .getRepository(User)
+      .createQueryBuilder("user")
+      .where("user.id = :userId", {
+        userId: context.req.session.userId
+      })
+      .getOne();
+
+    if (!user) {
+      result.success = false;
+      return result;
+    }
+    result.username = user.username;
+    return result;
+  }
+
   @Mutation(() => RegisterResult)
   async register(
     @Arg("options") options: RegisterInput
@@ -41,6 +85,7 @@ export class UserResolver {
   }
 
   @Mutation(() => RegularResult)
+  @UseMiddleware(isAuth)
   async createFriendship(
     @Arg("options") options: CreateFriendshipInput,
     @Ctx() context: MyContext
@@ -49,6 +94,7 @@ export class UserResolver {
   }
 
   @Query(() => FriendsRequestsResult)
+  @UseMiddleware(isAuth)
   async queryFriendsRequests(
     @Ctx() context: MyContext
   ): Promise<FriendsRequestsResult> {
@@ -56,6 +102,7 @@ export class UserResolver {
   }
 
   @Mutation(() => RegularResult)
+  @UseMiddleware(isAuth)
   async manageFriendsRequest(
     @Arg("options") options: ManageFriendsRequestInput,
     @Ctx() context: MyContext
@@ -64,6 +111,7 @@ export class UserResolver {
   }
 
   @Query(() => GetUsersResult)
+  @UseMiddleware(isAuth)
   async getUsers(
     @Arg("options") options: UsersOptions,
     @Ctx() context: MyContext
@@ -72,10 +120,17 @@ export class UserResolver {
   }
 
   @Query(() => GetUsersByUsernameResult)
+  @UseMiddleware(isAuth)
   async getUsersByUsername(
     @Arg("options") options: GetUsersByUsernameInput,
     @Ctx() context: MyContext
   ): Promise<GetUsersByUsernameResult> {
     return await getUsersByUsername(options, context);
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  logout(@Ctx() context: MyContext) {
+    return handleLogout(context);
   }
 }

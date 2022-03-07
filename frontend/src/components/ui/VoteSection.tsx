@@ -1,13 +1,13 @@
-import { Flex, Icon, IconButton, Stack, Text } from "@chakra-ui/react";
-import { FaArrowDown, FaArrowUp } from "react-icons/fa";
-import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
+import { Icon, IconButton, Stack, Text } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+import { cache } from "../..";
 import {
   PostFragmentFragment,
   VoteDocument,
   VoteMutation
 } from "../../generated";
-import { cache } from "../..";
 
 const VoteSection: React.FC<{
   post: PostFragmentFragment;

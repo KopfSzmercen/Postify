@@ -30,10 +30,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const Post_1 = require("../../entities/Post");
+const isAuth_1 = __importDefault(require("../../middleware/isAuth"));
 const friends_1 = require("../user/friends");
 const comment_1 = require("./comment");
 const createPost_1 = __importStar(require("./createPost"));
@@ -69,6 +73,7 @@ let PostResolver = class PostResolver {
 };
 __decorate([
     type_graphql_1.Mutation(() => createPost_1.CreatePostResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Arg("input")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
@@ -77,6 +82,7 @@ __decorate([
 ], PostResolver.prototype, "createPost", null);
 __decorate([
     type_graphql_1.Query(() => getPosts_1.GetSinglePostResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Arg("input")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
@@ -85,6 +91,7 @@ __decorate([
 ], PostResolver.prototype, "getSinglePost", null);
 __decorate([
     type_graphql_1.Query(() => getPosts_1.GetPaginatedPostsResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Arg("options")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
@@ -93,6 +100,7 @@ __decorate([
 ], PostResolver.prototype, "getPaginatedPosts", null);
 __decorate([
     type_graphql_1.Mutation(() => vote_1.VoteResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Arg("options")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
@@ -101,6 +109,7 @@ __decorate([
 ], PostResolver.prototype, "vote", null);
 __decorate([
     type_graphql_1.Mutation(() => comment_1.AddCommentResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Arg("input")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
@@ -109,6 +118,7 @@ __decorate([
 ], PostResolver.prototype, "addComment", null);
 __decorate([
     type_graphql_1.Query(() => comment_1.GetMoreCommentsResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Arg("options")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [comment_1.GetMoreCommentsInput]),
@@ -116,6 +126,7 @@ __decorate([
 ], PostResolver.prototype, "getMoreComments", null);
 __decorate([
     type_graphql_1.Mutation(() => friends_1.RegularResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Arg("input")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
@@ -124,6 +135,7 @@ __decorate([
 ], PostResolver.prototype, "editPost", null);
 __decorate([
     type_graphql_1.Mutation(() => friends_1.RegularResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Arg("input")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [deletePost_1.DeletePostInput]),

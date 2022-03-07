@@ -1,23 +1,16 @@
 import { useMutation } from "@apollo/client";
 import { Box, Button, Text } from "@chakra-ui/react";
-import { Formik, Form } from "formik";
-import { useEffect } from "react";
+import { Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { InputField } from "../components/ui/InputField";
 import Logo from "../components/ui/Logo";
 import { LoginDocument, LoginMutation } from "../generated";
 import formatFormErrors from "../utils/formatFormErrors";
-import useStore from "../utils/store/store";
+import useIsAuth from "../utils/useIsAuth";
 
 const Login = () => {
   const navigate = useNavigate();
   const [sendLogin] = useMutation<LoginMutation>(LoginDocument);
-  const store = useStore();
-  const isLoggedIn = useStore((state) => state.isLoggedIn);
-
-  useEffect(() => {
-    if (isLoggedIn) navigate("/dashboard", { replace: true });
-  }, [isLoggedIn, navigate]);
 
   return (
     <>
@@ -48,9 +41,6 @@ const Login = () => {
               ) {
                 setErrors(formatFormErrors(response.data.login.errors));
               } else if (response.data?.login.success) {
-                const userId = response.data!.login.userId as number;
-                const username = response.data.login.username as string;
-                store.logInUser(userId, username);
                 navigate("/dashboard", { replace: true });
               }
             }}
