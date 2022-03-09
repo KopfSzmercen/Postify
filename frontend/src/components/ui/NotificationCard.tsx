@@ -19,12 +19,12 @@ const NotificationCard: React.FC<{ notification: NoteFragmentFragment }> = ({
   const [deleteNote, { loading }] =
     useMutation<DeleteNoteMutation>(DeleteNoteDocument);
   return (
-    <Box w="100%" maxW="400px" bg="whiteAlpha.900" p="15px" borderRadius="5px">
+    <Box w="100%" maxW="450px" bg="whiteAlpha.900" p="15px" borderRadius="5px">
       <Text>{parsedDate}</Text>
-      <Flex justify="center" align="center">
+      <Flex justify="space-between" align="center">
         <Text>{notification.text}</Text>
         <IconButton
-          ml="20px"
+          ml="auto"
           colorScheme="red"
           aria-label="delete"
           disabled={loading}

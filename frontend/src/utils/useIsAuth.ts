@@ -13,8 +13,6 @@ const useIsAuth = () => {
   const isProtected = params.pathname.includes("/dashboard");
 
   useEffect(() => {
-    console.log(data?.me);
-
     if (!loading && !data?.me.success) {
       if (isProtected) navigate("/login", { replace: true });
     } else if (!loading && data?.me.success) {

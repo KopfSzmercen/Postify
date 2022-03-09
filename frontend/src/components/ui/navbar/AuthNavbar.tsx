@@ -31,7 +31,7 @@ export default function AuthNavbar() {
 
   return (
     <>
-      <Box bg="blackAlpha.800" p={["15px 30px", "5px 30px"]}>
+      <Box bg="blackAlpha.800" p={["25px 30px", "15px 30px"]}>
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <IconButton
             size={"md"}
@@ -61,7 +61,12 @@ export default function AuthNavbar() {
                 cursor={"pointer"}
                 minW={0}
               >
-                <Avatar size={"md"} name={myUsername} />
+                <Box mt="10px">
+                  <Avatar size={"md"} name={myUsername} />
+                  <Text mt="5px" fontSize="sm">
+                    {myUsername}
+                  </Text>
+                </Box>
               </MenuButton>
               <MenuList>
                 <MenuItem

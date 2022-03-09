@@ -20,13 +20,13 @@ const Notifications = () => {
         <Heading>Notifications</Heading>
       </Center>
 
-      <Center mt="20px">
-        <Stack>
+      <Box mt="20px">
+        <Stack w="100%" align="center">
           {data?.getNotes.notes.map((note) => {
             return <NotificationCard notification={note} key={note.id} />;
           })}
         </Stack>
-      </Center>
+      </Box>
     </Box>
   );
 };

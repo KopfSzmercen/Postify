@@ -54,9 +54,10 @@ const handleCreateFriendship = async (options, ctx) => {
         const user = await typeorm_1.getConnection()
             .getRepository(User_1.User)
             .createQueryBuilder("user")
-            .select("user.id")
+            .select("user")
             .where("user.id = :id", { id: userId })
             .getOne();
+        console.log(user);
         if (!user) {
             result.success = false;
             result.errors.push(`User with id ${userId} does not exist`);
@@ -65,7 +66,7 @@ const handleCreateFriendship = async (options, ctx) => {
         const friend = await typeorm_1.getConnection()
             .getRepository(User_1.User)
             .createQueryBuilder("user")
-            .select("user.id")
+            .select("user")
             .where("user.id = :id", { id: options.friend })
             .getOne();
         if (!friend) {

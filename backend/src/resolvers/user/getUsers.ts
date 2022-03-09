@@ -1,44 +1,7 @@
 import { Field, InputType, Int, ObjectType } from "type-graphql";
 import { getConnection } from "typeorm";
-import { Friendship } from "../../entities/Friendship";
 import { User } from "../../entities/User";
 import { MyContext } from "../../types";
-
-const friendshipStatus = async (
-  currentUserId: number,
-  secondUserId: number
-) => {
-  try {
-    const requestFromUser = await getConnection()
-      .getRepository(Friendship)
-      .createQueryBuilder("f")
-      .where("f.user = :currentUserId AND f.friend = :secondUserId", {
-        currentUserId,
-        secondUserId
-      })
-      .getOne();
-
-    const decisionOfSecondUser = await getConnection()
-      .getRepository(Friendship)
-      .createQueryBuilder("f")
-      .where("f.user = :secondUserId AND f.friend = :currentUserId", {
-        secondUserId,
-        currentUserId
-      })
-      .getOne();
-
-    if (requestFromUser && decisionOfSecondUser) return "ARE FRIENDS";
-
-    if (requestFromUser && !decisionOfSecondUser) return "PENDING OUTGOING";
-
-    if (!requestFromUser && decisionOfSecondUser) return "PENDING INCOMING";
-
-    return "NO REQUEST";
-  } catch (error) {
-    console.log(error);
-    return undefined;
-  }
-};
 
 @InputType()
 export class UsersOptions {
@@ -88,7 +51,6 @@ export const handleGetUsers = async (options: UsersOptions, ctx: MyContext) => {
     hasMore: false
   };
   const currUserId = ctx.req.session.userId;
-  console.log(currUserId);
   const limit = options.limit || 20;
   const cursor = options.cursor || 1;
 
@@ -96,27 +58,21 @@ export const handleGetUsers = async (options: UsersOptions, ctx: MyContext) => {
   const realLimitPlusOne = realLimit + 1;
 
   try {
-    const users: User[] | UserProfile[] = await getConnection()
-      .getRepository(User)
-      .createQueryBuilder("user")
-      .orderBy("user.id", "ASC")
-      .take(realLimitPlusOne)
-      .where("user.id > :cursor AND user.id != :currUserId", {
-        cursor,
-        currUserId
-      })
-      .take(realLimitPlusOne)
-      .getMany();
+    const replacements = [cursor, currUserId, realLimitPlusOne];
 
-    const usersWithFriendship: UserProfile[] = [];
+    const users = await getConnection().query(
+      `
+      select u.*,
+      (select * from get_status($2, u.id) ) "friendshipStatus"
 
-    for (let i = 0; i < users.length; i++) {
-      const friendship = await friendshipStatus(currUserId, users[i].id);
-      friendship &&
-        usersWithFriendship.push({ ...users[i], friendshipStatus: friendship });
-    }
-
-    result.users = usersWithFriendship.slice(0, realLimit);
+      from "user" u
+      where u.id > $1 and u.id != $2
+      order by u.id ASC
+      limit $3
+      `,
+      replacements
+    );
+    result.users = users;
     if (users.length === realLimitPlusOne) result.hasMore = true;
     return result;
   } catch (err) {
@@ -158,29 +114,28 @@ export const getUsersByUsername = async (
   const { username } = options;
 
   try {
-    const users = await getConnection()
-      .getRepository(User)
-      .createQueryBuilder("user")
-      .where("user.username LIKE :username AND user.id != :currUserId", {
-        username: `%${username}%`,
-        currUserId
-      })
-      .getMany();
+    // const users = await getConnection()
+    //   .getRepository(User)
+    //   .createQueryBuilder("user")
+    //   .where("user.username LIKE :username AND user.id != :currUserId", {
+    //     username: `%${username}%`,
+    //     currUserId
+    //   })
+    //   .getMany();
 
-    console.log(users);
+    const users = await getConnection().query(
+      `
+      select u.*,
+      (select * from get_status($2, u.id) ) "friendshipStatus"
+
+      from "user" u
+      where u.username LIKE CONCAT('%', $1::text, '%') and u.id != $2
+
+    `,
+      [username, currUserId]
+    );
     if (users.length > 0) {
-      const usersWithFriendship: UserProfile[] = [];
-      console.log("here");
-      for (let i = 0; i < users.length; i++) {
-        const friendship = await friendshipStatus(currUserId, users[i].id);
-
-        friendship &&
-          usersWithFriendship.push({
-            ...users[i],
-            friendshipStatus: friendship
-          });
-      }
-      result.users = [...usersWithFriendship];
+      result.users = users;
     }
     return result;
   } catch (err) {

@@ -40,10 +40,11 @@ export const handleCreateFriendship = async (
     const user = await getConnection()
       .getRepository(User)
       .createQueryBuilder("user")
-      .select("user.id")
+      .select("user")
       .where("user.id = :id", { id: userId })
       .getOne();
 
+    console.log(user);
     if (!user) {
       result.success = false;
       result.errors.push(`User with id ${userId} does not exist`);
@@ -53,7 +54,7 @@ export const handleCreateFriendship = async (
     const friend = await getConnection()
       .getRepository(User)
       .createQueryBuilder("user")
-      .select("user.id")
+      .select("user")
       .where("user.id = :id", { id: options.friend })
       .getOne();
 

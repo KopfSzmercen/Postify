@@ -25,6 +25,44 @@ const connectDB = async () => {
             logging: true,
             migrations: [path_1.default.join(__dirname, "./migrations/*")]
         });
+        await connection.query(`
+    CREATE OR REPLACE FUNCTION get_status(u1 int, u2 int)
+    RETURNS TEXT
+    AS
+    $BODY$
+
+    DECLARE 
+    result text := '';
+    f1 int;
+    f2 int;
+   
+    BEGIN
+    SELECT id from friendship
+    where "user" = u1 and friend = u2 into f1;
+
+    SELECT id from friendship
+    where "user" = u2 and friend = u1 into f2;
+
+    IF f1 IS NOT NULL and f2 IS NOT NULL THEN
+    result := 'ARE FRIENDS';
+
+    ELSIF f1 IS NOT NULL and f2 IS NULL  THEN
+    result := 'PENDING OUTGOING';
+
+    ELSIF f1 IS NOT NULL and f2 IS NOT NULL THEN
+    result := 'PENDING INCOMING';
+
+    ELSE
+    result := 'NO REQUEST';
+
+    END IF;
+
+    RETURN result;
+    END;
+    $BODY$ 
+    language plpgsql;
+
+    `);
         return connection;
     }
     catch (error) {
