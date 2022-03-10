@@ -1,0 +1,5 @@
+fragment UserFragment on UserProfile {
+  username
+  id
+  friendshipStatus
+}

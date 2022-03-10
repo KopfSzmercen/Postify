@@ -89,7 +89,7 @@ const Users: React.FC<{}> = () => {
           </Center>
         </>
       ) : (
-        <SearchedUsers users={data!.getUsers.users} searchValue={searchValue} />
+        <SearchedUsers searchValue={searchValue} />
       )}
 
       <IconButton

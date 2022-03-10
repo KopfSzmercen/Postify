@@ -3,9 +3,7 @@ query GetUsers($limit: Int!, $cursor: Int) {
     success
     hasMore
     users {
-      id
-      username
-      friendshipStatus
+      ...UserFragment
     }
   }
 }

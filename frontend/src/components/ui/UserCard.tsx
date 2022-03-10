@@ -1,15 +1,11 @@
 import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import React from "react";
+import { UserFragmentFragment } from "../../generated";
 import CreateFriendshipButton from "../functionButtons/CreateFriendshipButton";
 import IncomingFriendshipButton from "../functionButtons/IncomingFriendshipButton";
 
 const UserCard: React.FC<{
-  user: {
-    __typename?: "UserProfile" | undefined;
-    id: number;
-    username: string;
-    friendshipStatus: string;
-  };
+  user: UserFragmentFragment;
 }> = ({ user }) => {
   return (
     <Box
@@ -38,7 +34,7 @@ const UserCard: React.FC<{
       )}
 
       {user.friendshipStatus === "PENDING INCOMING" && (
-        <IncomingFriendshipButton user={user} />
+        <IncomingFriendshipButton userId={user.id} deleteNote={null} />
       )}
 
       {user.friendshipStatus === "PENDING OUTGOING" && (

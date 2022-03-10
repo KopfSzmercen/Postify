@@ -43,10 +43,10 @@ const connectDB = async () => {
     IF f1 IS NOT NULL and f2 IS NOT NULL THEN
     result := 'ARE FRIENDS';
 
-    ELSIF f1 IS NOT NULL and f2 IS NULL  THEN
+    ELSIF f1 IS NOT NULL and f2 IS NULL THEN
     result := 'PENDING OUTGOING';
 
-    ELSIF f1 IS NOT NULL and f2 IS NOT NULL THEN
+    ELSIF f1 IS NULL and f2 IS NOT NULL THEN
     result := 'PENDING INCOMING';
 
     ELSE

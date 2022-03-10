@@ -8,32 +8,31 @@ import {
   Resolver,
   UseMiddleware
 } from "type-graphql";
+import { getConnection } from "typeorm";
 import { User } from "../../entities/User";
-import { RegisterInput, RegisterResult } from "./register";
-import handleRegister from "./register";
-import { LoginInput, LoginResult } from "./login";
+import isAuth from "../../middleware/isAuth";
 import { MyContext } from "../../types";
-import handleLogin from "./login";
 import {
   CreateFriendshipInput,
-  RegularResult,
   handleCreateFriendship,
-  FriendsRequestsResult,
-  getFriendshipRequest,
   handleManageFriendsRequest,
-  ManageFriendsRequestInput
+  ManageFriendsRequestInput,
+  RegularResult
 } from "./friends";
 import {
+  GetUserByIdInput,
+  GetUserByIdResult,
   getUsersByUsername,
   GetUsersByUsernameInput,
   GetUsersByUsernameResult,
   GetUsersResult,
+  handleGetUserById,
   handleGetUsers,
   UsersOptions
 } from "./getUsers";
+import handleLogin, { LoginInput, LoginResult } from "./login";
 import handleLogout from "./logout";
-import isAuth from "../../middleware/isAuth";
-import { getConnection } from "typeorm";
+import handleRegister, { RegisterInput, RegisterResult } from "./register";
 
 @ObjectType()
 class MeResult {
@@ -93,14 +92,6 @@ export class UserResolver {
     return await handleCreateFriendship(options, context);
   }
 
-  @Query(() => FriendsRequestsResult)
-  @UseMiddleware(isAuth)
-  async queryFriendsRequests(
-    @Ctx() context: MyContext
-  ): Promise<FriendsRequestsResult> {
-    return await getFriendshipRequest(context);
-  }
-
   @Mutation(() => RegularResult)
   @UseMiddleware(isAuth)
   async manageFriendsRequest(
@@ -126,6 +117,15 @@ export class UserResolver {
     @Ctx() context: MyContext
   ): Promise<GetUsersByUsernameResult> {
     return await getUsersByUsername(options, context);
+  }
+
+  @Query(() => GetUserByIdResult)
+  @UseMiddleware(isAuth)
+  async getUserById(
+    @Arg("input") input: GetUserByIdInput,
+    @Ctx() context: MyContext
+  ): Promise<GetUserByIdResult> {
+    return await handleGetUserById(input, context);
   }
 
   @Mutation(() => Boolean)

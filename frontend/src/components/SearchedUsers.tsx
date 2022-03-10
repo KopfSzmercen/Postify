@@ -3,15 +3,13 @@ import { Center, Progress, Stack, Text } from "@chakra-ui/react";
 import React from "react";
 import {
   GetUsersByUsernameDocument,
-  GetUsersByUsernameQuery,
-  GetUsersResult
+  GetUsersByUsernameQuery
 } from "../generated";
 import UserCard from "./ui/UserCard";
 
 const SearchedUsers: React.FC<{
-  users: GetUsersResult["users"];
   searchValue: string;
-}> = ({ users, searchValue }) => {
+}> = ({ searchValue }) => {
   const { data, loading } = useQuery<GetUsersByUsernameQuery>(
     GetUsersByUsernameDocument,
     {

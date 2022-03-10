@@ -1,0 +1,9 @@
+query GetUserById($userId: Int!) {
+  getUserById(input: { userId: $userId }) {
+    success
+    user {
+      ...UserFragment
+    }
+    errors
+  }
+}

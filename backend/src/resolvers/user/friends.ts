@@ -91,7 +91,8 @@ export const handleCreateFriendship = async (
         .into(Note)
         .values({
           text: `${user.username} and You are friends now!`,
-          userId: friend.id
+          userId: friend.id,
+          type: "TEXT"
         })
         .execute();
 
@@ -101,7 +102,8 @@ export const handleCreateFriendship = async (
         .into(Note)
         .values({
           text: `${friend.username} and You are friends now!`,
-          userId: user.id
+          userId: user.id,
+          type: "TEXT"
         })
         .execute();
 
@@ -124,7 +126,9 @@ export const handleCreateFriendship = async (
       .into(Note)
       .values({
         text: `${user.username} wants to be your friend`,
-        userId: friend.id
+        senderId: user.id,
+        userId: friend.id,
+        type: "FRIENDS REQ"
       })
       .execute();
 
@@ -134,73 +138,6 @@ export const handleCreateFriendship = async (
     result.success = false;
     result.errors.push(error?.msg);
 
-    return result;
-  }
-};
-
-@ObjectType()
-class FriendsRequest {
-  @Field(() => String)
-  message!: string;
-
-  @Field(() => Number)
-  senderId!: number;
-
-  @Field(() => String)
-  createdAt!: string;
-}
-
-@ObjectType()
-export class FriendsRequestsResult extends RegularResult {
-  @Field(() => [FriendsRequest])
-  requests!: FriendsRequest[];
-}
-
-export const getFriendshipRequest = async (ctx: MyContext) => {
-  const { userId } = ctx.req.session;
-
-  const result: FriendsRequestsResult = {
-    success: true,
-    errors: [],
-    requests: []
-  };
-
-  if (!userId) {
-    result.success = false;
-    result.errors.push("User id not provided");
-    return result;
-  }
-
-  try {
-    const friendships = await getConnection()
-      .getRepository(Friendship)
-      .createQueryBuilder("f")
-      .where("f.friend = :friendId", { friendId: userId })
-      .getMany();
-
-    const allRequests: FriendsRequest[] = [];
-
-    for (let i = 0; i < friendships.length; i++) {
-      const r = friendships[i];
-      const senderUsername = await getConnection()
-        .getRepository(User)
-        .createQueryBuilder("user")
-        .select("user.username")
-        .where("user.id = :id", { id: r.user })
-        .getOne();
-
-      const builtRequest: FriendsRequest = {
-        message: `${senderUsername?.username} wants to be Your friend`,
-        senderId: r.user,
-        createdAt: r.createdAt.toISOString()
-      };
-      allRequests.push({ ...builtRequest });
-    }
-    result.requests = [...allRequests];
-    return result;
-  } catch (error) {
-    console.log(error);
-    result.success = false;
     return result;
   }
 };

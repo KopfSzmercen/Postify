@@ -43,7 +43,6 @@ const handleGetNotes = async (ctx) => {
             .createQueryBuilder("n")
             .where('n."userId" = :userId', { userId })
             .getMany();
-        console.log(notes);
         result.notes = [...notes];
         return result;
     }

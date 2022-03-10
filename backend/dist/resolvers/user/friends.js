@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleManageFriendsRequest = exports.ManageFriendsRequestInput = exports.getFriendshipRequest = exports.FriendsRequestsResult = exports.handleCreateFriendship = exports.RegularResult = exports.CreateFriendshipInput = void 0;
+exports.handleManageFriendsRequest = exports.ManageFriendsRequestInput = exports.handleCreateFriendship = exports.RegularResult = exports.CreateFriendshipInput = void 0;
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 const Friendship_1 = require("../../entities/Friendship");
@@ -99,7 +99,8 @@ const handleCreateFriendship = async (options, ctx) => {
                 .into(Note_1.Note)
                 .values({
                 text: `${user.username} and You are friends now!`,
-                userId: friend.id
+                userId: friend.id,
+                type: "TEXT"
             })
                 .execute();
             await typeorm_1.getConnection()
@@ -108,7 +109,8 @@ const handleCreateFriendship = async (options, ctx) => {
                 .into(Note_1.Note)
                 .values({
                 text: `${friend.username} and You are friends now!`,
-                userId: user.id
+                userId: user.id,
+                type: "TEXT"
             })
                 .execute();
             return result;
@@ -128,7 +130,9 @@ const handleCreateFriendship = async (options, ctx) => {
             .into(Note_1.Note)
             .values({
             text: `${user.username} wants to be your friend`,
-            userId: friend.id
+            senderId: user.id,
+            userId: friend.id,
+            type: "FRIENDS REQ"
         })
             .execute();
         return result;
@@ -141,77 +145,6 @@ const handleCreateFriendship = async (options, ctx) => {
     }
 };
 exports.handleCreateFriendship = handleCreateFriendship;
-let FriendsRequest = class FriendsRequest {
-};
-__decorate([
-    type_graphql_1.Field(() => String),
-    __metadata("design:type", String)
-], FriendsRequest.prototype, "message", void 0);
-__decorate([
-    type_graphql_1.Field(() => Number),
-    __metadata("design:type", Number)
-], FriendsRequest.prototype, "senderId", void 0);
-__decorate([
-    type_graphql_1.Field(() => String),
-    __metadata("design:type", String)
-], FriendsRequest.prototype, "createdAt", void 0);
-FriendsRequest = __decorate([
-    type_graphql_1.ObjectType()
-], FriendsRequest);
-let FriendsRequestsResult = class FriendsRequestsResult extends RegularResult {
-};
-__decorate([
-    type_graphql_1.Field(() => [FriendsRequest]),
-    __metadata("design:type", Array)
-], FriendsRequestsResult.prototype, "requests", void 0);
-FriendsRequestsResult = __decorate([
-    type_graphql_1.ObjectType()
-], FriendsRequestsResult);
-exports.FriendsRequestsResult = FriendsRequestsResult;
-const getFriendshipRequest = async (ctx) => {
-    const { userId } = ctx.req.session;
-    const result = {
-        success: true,
-        errors: [],
-        requests: []
-    };
-    if (!userId) {
-        result.success = false;
-        result.errors.push("User id not provided");
-        return result;
-    }
-    try {
-        const friendships = await typeorm_1.getConnection()
-            .getRepository(Friendship_1.Friendship)
-            .createQueryBuilder("f")
-            .where("f.friend = :friendId", { friendId: userId })
-            .getMany();
-        const allRequests = [];
-        for (let i = 0; i < friendships.length; i++) {
-            const r = friendships[i];
-            const senderUsername = await typeorm_1.getConnection()
-                .getRepository(User_1.User)
-                .createQueryBuilder("user")
-                .select("user.username")
-                .where("user.id = :id", { id: r.user })
-                .getOne();
-            const builtRequest = {
-                message: `${senderUsername === null || senderUsername === void 0 ? void 0 : senderUsername.username} wants to be Your friend`,
-                senderId: r.user,
-                createdAt: r.createdAt.toISOString()
-            };
-            allRequests.push({ ...builtRequest });
-        }
-        result.requests = [...allRequests];
-        return result;
-    }
-    catch (error) {
-        console.log(error);
-        result.success = false;
-        return result;
-    }
-};
-exports.getFriendshipRequest = getFriendshipRequest;
 let ManageFriendsRequestInput = class ManageFriendsRequestInput {
 };
 __decorate([

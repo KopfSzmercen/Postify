@@ -28,7 +28,6 @@ const handleGetNotes = async (ctx: MyContext) => {
       .where('n."userId" = :userId', { userId })
       .getMany();
 
-    console.log(notes);
     result.notes = [...notes];
     return result;
   } catch (err) {

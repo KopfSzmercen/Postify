@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -9,7 +9,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from "typeorm";
-import { Post } from "./Post";
 import { User } from "./User";
 
 @Entity()
@@ -26,7 +25,15 @@ export class Note extends BaseEntity {
   @Column()
   text!: string;
 
-  @ManyToOne(() => User, (user) => user.votes)
+  @Field()
+  @Column()
+  type!: string;
+
+  @Field(() => Int, { nullable: true })
+  @Column({ nullable: true })
+  senderId?: number;
+
+  @ManyToOne(() => User, (user) => user.notes)
   user!: User;
 
   @ManyToOne(() => User, (user) => user.notes, {

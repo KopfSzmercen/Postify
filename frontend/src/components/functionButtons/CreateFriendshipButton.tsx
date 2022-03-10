@@ -5,16 +5,12 @@ import { FaPlusSquare } from "react-icons/fa";
 import { cache } from "../..";
 import {
   CreateFriendshipDocument,
-  CreateFriendshipMutation
+  CreateFriendshipMutation,
+  UserFragmentFragment
 } from "../../generated";
 
 const CreateFriendshipButton: React.FC<{
-  user: {
-    __typename?: "UserProfile" | undefined;
-    id: number;
-    username: string;
-    friendshipStatus: string;
-  };
+  user: UserFragmentFragment;
 }> = ({ user }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [createFriendship] = useMutation<CreateFriendshipMutation>(

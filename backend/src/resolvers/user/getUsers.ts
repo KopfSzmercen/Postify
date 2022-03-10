@@ -1,6 +1,5 @@
 import { Field, InputType, Int, ObjectType } from "type-graphql";
 import { getConnection } from "typeorm";
-import { User } from "../../entities/User";
 import { MyContext } from "../../types";
 
 @InputType()
@@ -114,15 +113,6 @@ export const getUsersByUsername = async (
   const { username } = options;
 
   try {
-    // const users = await getConnection()
-    //   .getRepository(User)
-    //   .createQueryBuilder("user")
-    //   .where("user.username LIKE :username AND user.id != :currUserId", {
-    //     username: `%${username}%`,
-    //     currUserId
-    //   })
-    //   .getMany();
-
     const users = await getConnection().query(
       `
       select u.*,
@@ -143,6 +133,55 @@ export const getUsersByUsername = async (
     result.success = false;
     result.errors = [];
     error.message && result.errors.push(error.message);
+    return result;
+  }
+};
+
+@InputType()
+export class GetUserByIdInput {
+  @Field(() => Int)
+  userId!: number;
+}
+
+@ObjectType()
+export class GetUserByIdResult {
+  @Field()
+  success!: boolean;
+
+  @Field(() => [String], { nullable: true })
+  errors?: string[];
+
+  @Field(() => UserProfile, { nullable: true })
+  user?: UserProfile;
+}
+
+export const handleGetUserById = async (
+  input: GetUserByIdInput,
+  ctx: MyContext
+) => {
+  const result: GetUserByIdResult = {
+    success: true
+  };
+  const currUserId = ctx.req.session.userId;
+
+  try {
+    const user = await getConnection().query(
+      `
+      select u.*,
+      (select * from get_status($2, u.id) ) "friendshipStatus"
+
+      from "user" u
+      where u.id = $1 and u.id != $2
+    `,
+      [input.userId, currUserId]
+    );
+
+    if (user[0]) result.user = user[0];
+    return result;
+  } catch (err) {
+    const error = err as Error;
+    if (error.message) result.errors = [error.message];
+    result.success = false;
     return result;
   }
 };

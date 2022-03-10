@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUsersByUsername = exports.GetUsersByUsernameResult = exports.GetUsersByUsernameInput = exports.handleGetUsers = exports.GetUsersResult = exports.UsersOptions = void 0;
+exports.handleGetUserById = exports.GetUserByIdResult = exports.GetUserByIdInput = exports.getUsersByUsername = exports.GetUsersByUsernameResult = exports.GetUsersByUsernameInput = exports.handleGetUsers = exports.GetUsersResult = exports.UsersOptions = void 0;
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 let UsersOptions = class UsersOptions {
@@ -138,14 +138,6 @@ const getUsersByUsername = async (options, ctx) => {
     const currUserId = ctx.req.session.userId;
     const { username } = options;
     try {
-        // const users = await getConnection()
-        //   .getRepository(User)
-        //   .createQueryBuilder("user")
-        //   .where("user.username LIKE :username AND user.id != :currUserId", {
-        //     username: `%${username}%`,
-        //     currUserId
-        //   })
-        //   .getMany();
         const users = await typeorm_1.getConnection().query(`
       select u.*,
       (select * from get_status($2, u.id) ) "friendshipStatus"
@@ -168,3 +160,57 @@ const getUsersByUsername = async (options, ctx) => {
     }
 };
 exports.getUsersByUsername = getUsersByUsername;
+let GetUserByIdInput = class GetUserByIdInput {
+};
+__decorate([
+    type_graphql_1.Field(() => type_graphql_1.Int),
+    __metadata("design:type", Number)
+], GetUserByIdInput.prototype, "userId", void 0);
+GetUserByIdInput = __decorate([
+    type_graphql_1.InputType()
+], GetUserByIdInput);
+exports.GetUserByIdInput = GetUserByIdInput;
+let GetUserByIdResult = class GetUserByIdResult {
+};
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Boolean)
+], GetUserByIdResult.prototype, "success", void 0);
+__decorate([
+    type_graphql_1.Field(() => [String], { nullable: true }),
+    __metadata("design:type", Array)
+], GetUserByIdResult.prototype, "errors", void 0);
+__decorate([
+    type_graphql_1.Field(() => UserProfile, { nullable: true }),
+    __metadata("design:type", UserProfile)
+], GetUserByIdResult.prototype, "user", void 0);
+GetUserByIdResult = __decorate([
+    type_graphql_1.ObjectType()
+], GetUserByIdResult);
+exports.GetUserByIdResult = GetUserByIdResult;
+const handleGetUserById = async (input, ctx) => {
+    const result = {
+        success: true
+    };
+    const currUserId = ctx.req.session.userId;
+    try {
+        const user = await typeorm_1.getConnection().query(`
+      select u.*,
+      (select * from get_status($2, u.id) ) "friendshipStatus"
+
+      from "user" u
+      where u.id = $1 and u.id != $2
+    `, [input.userId, currUserId]);
+        if (user[0])
+            result.user = user[0];
+        return result;
+    }
+    catch (err) {
+        const error = err;
+        if (error.message)
+            result.errors = [error.message];
+        result.success = false;
+        return result;
+    }
+};
+exports.handleGetUserById = handleGetUserById;

@@ -26,6 +26,9 @@ export class User extends BaseEntity {
   username!: string;
 
   @Field()
+  friendshipStatus!: string;
+
+  @Field()
   @Column({ unique: true })
   email!: string;
 

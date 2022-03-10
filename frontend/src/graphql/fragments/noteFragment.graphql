@@ -2,4 +2,6 @@ fragment NoteFragment on Note {
   createdAt
   id
   text
+  senderId
+  type
 }
