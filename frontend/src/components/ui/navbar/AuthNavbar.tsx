@@ -63,7 +63,7 @@ export default function AuthNavbar() {
               >
                 <Box mt="10px">
                   <Avatar size={"md"} name={myUsername} />
-                  <Text mt="5px" fontSize="sm">
+                  <Text mt="5px" fontSize="sm" color="whiteAlpha.900">
                     {myUsername}
                   </Text>
                 </Box>

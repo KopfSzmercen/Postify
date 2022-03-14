@@ -71,7 +71,9 @@ const handleGetSinglePost = async (input, ctx) => {
             'id', c.id, 
             'updatedAt', to_char(c."updatedAt", 'YYYY.MM.DD HH24:MI'), 
             'creatorName', username,
-            'creatorId', creat.id )   
+            'creatorId', creat.id,
+            'canEdit', (case when c."userId" = $1 then 'true' else 'false' end)
+            )   
 
           from comment c
           inner join public.user creat on creat.id = c."userId"

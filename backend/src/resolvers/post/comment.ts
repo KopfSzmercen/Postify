@@ -103,7 +103,10 @@ export class GetMoreCommentsResult {
   paginatedComments?: PaginatedComment[];
 }
 
-export const handleGetMoreComments = async (input: GetMoreCommentsInput) => {
+export const handleGetMoreComments = async (
+  input: GetMoreCommentsInput,
+  ctx: MyContext
+) => {
   const result: GetMoreCommentsResult = {
     success: true,
     hasMoreComments: false,
@@ -112,6 +115,7 @@ export const handleGetMoreComments = async (input: GetMoreCommentsInput) => {
 
   const cursor = input.cursor;
   const postId = input.postId;
+  const currUserId = ctx.req.session.userId;
 
   try {
     const queryResult = await getConnection().query(
@@ -121,15 +125,17 @@ export const handleGetMoreComments = async (input: GetMoreCommentsInput) => {
         'id', c.id, 
         'updatedAt', to_char(c."updatedAt", 'YYYY.MM.DD HH24:MI'), 
         'creatorName', username,
-        'creatorId', creat.id )   
-
+        'creatorId', creat.id,
+        'canEdit', (case when c."userId" = $3 then 'true' else 'false' end)   
+        )
+      
       from comment c
       inner join public.user creat on creat.id = c."userId"
       where c."postId" = $1 and c."updatedAt" < $2
       order by c."updatedAt" DESC
       limit 6
       ) "paginatedComments"`,
-      [postId, cursor]
+      [postId, cursor, currUserId]
     );
 
     result.paginatedComments = queryResult[0].paginatedComments.slice(0, 5);

@@ -11,11 +11,15 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
-import { GetPaginatedPostsResult, GetUsersResult } from "./generated";
-import reportWebVitals from "./reportWebVitals";
+import {
+  GetPaginatedPostsResult,
+  GetUsersResult,
+  PostFragmentFragment
+} from "./generated";
 import theme from "./utils/theme";
 
 export const myUsernameVar = makeVar("");
+export const currentPostVar = makeVar<null | PostFragmentFragment>(null);
 
 export const cache = new InMemoryCache({
   typePolicies: {
@@ -79,5 +83,3 @@ ReactDOM.render(
   </BrowserRouter>,
   document.getElementById("root")
 );
-
-reportWebVitals();

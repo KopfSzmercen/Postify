@@ -1,8 +1,11 @@
 import { Box, Heading } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Logo = () => {
   const navigate = useNavigate();
+  const params = useLocation();
+  const to = params.pathname.includes("/dashboard") ? "/dashboard" : "/";
+
   return (
     <Box
       width="100%"
@@ -11,7 +14,7 @@ const Logo = () => {
       aria-label="/"
       padding="5px 10px 10px 0px"
       borderRadius="10px"
-      onClick={() => navigate("/")}
+      onClick={() => navigate(to)}
     >
       <Heading color="whiteAlpha.900">Postify</Heading>
       <Box bgColor="blue.500" height="15px" mt="5px" width="105%"></Box>

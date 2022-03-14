@@ -1,0 +1,8 @@
+fragment CommentFragment on PaginatedComment {
+  id
+  text
+  updatedAt
+  creatorName
+  creatorId
+  canEdit
+}

@@ -128,7 +128,7 @@ GetMoreCommentsResult = __decorate([
     type_graphql_1.ObjectType()
 ], GetMoreCommentsResult);
 exports.GetMoreCommentsResult = GetMoreCommentsResult;
-const handleGetMoreComments = async (input) => {
+const handleGetMoreComments = async (input, ctx) => {
     const result = {
         success: true,
         hasMoreComments: false,
@@ -136,6 +136,7 @@ const handleGetMoreComments = async (input) => {
     };
     const cursor = input.cursor;
     const postId = input.postId;
+    const currUserId = ctx.req.session.userId;
     try {
         const queryResult = await globals_1.getConnection().query(`select array (
       select json_build_object (
@@ -143,14 +144,16 @@ const handleGetMoreComments = async (input) => {
         'id', c.id, 
         'updatedAt', to_char(c."updatedAt", 'YYYY.MM.DD HH24:MI'), 
         'creatorName', username,
-        'creatorId', creat.id )   
-
+        'creatorId', creat.id,
+        'canEdit', (case when c."userId" = $3 then 'true' else 'false' end)   
+        )
+      
       from comment c
       inner join public.user creat on creat.id = c."userId"
       where c."postId" = $1 and c."updatedAt" < $2
       order by c."updatedAt" DESC
       limit 6
-      ) "paginatedComments"`, [postId, cursor]);
+      ) "paginatedComments"`, [postId, cursor, currUserId]);
         result.paginatedComments = queryResult[0].paginatedComments.slice(0, 5);
         result.hasMoreComments = queryResult[0].paginatedComments.length > 5;
         return result;

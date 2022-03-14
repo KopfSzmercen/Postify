@@ -21,6 +21,7 @@ import VoteSection from "./VoteSection";
 import { FaArrowLeft, FaEdit } from "react-icons/fa";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import { ImBin2 } from "react-icons/im";
+import { currentPostVar } from "../..";
 
 const PostDetailCard = () => {
   const { postId } = useParams();
@@ -79,6 +80,8 @@ const PostDetailCard = () => {
   const parsedDate = new Date(parseInt(post!.createdAt))
     .toISOString()
     .substring(0, 10);
+
+  currentPostVar(post);
 
   return (
     <Box shadow="lg" borderRadius="5px" w="100%" maxW="600px" bg="white">

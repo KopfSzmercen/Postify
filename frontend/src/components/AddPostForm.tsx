@@ -22,12 +22,15 @@ const AddPostForm = () => {
         cache.modify({
           fields: {
             getPaginatedPosts(existing) {
-              const newPostRef = cache.writeFragment({
-                data: data?.createPost.returnedPost,
-                fragment: PostFragmentFragmentDoc
-              });
+              // const newPostRef = cache.writeFragment({
+              //   data: data?.createPost.returnedPost,
+              //   fragment: PostFragmentFragmentDoc
+              // });
 
-              return { ...existing, posts: [newPostRef, ...existing.posts] };
+              return {
+                ...existing,
+                posts: [data.createPost.returnedPost, ...existing.posts]
+              };
             }
           }
         });

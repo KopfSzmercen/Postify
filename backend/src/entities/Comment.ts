@@ -19,6 +19,7 @@ export class Comment extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Field()
   @PrimaryColumn()
   userId!: number;
 
@@ -29,15 +30,18 @@ export class Comment extends BaseEntity {
   @PrimaryColumn()
   postId!: number;
 
-  @ManyToOne(() => User, (user) => user.votes, {
+  @ManyToOne(() => User, (user) => user.comments, {
     onDelete: "CASCADE"
   })
   user!: User;
 
-  @ManyToOne(() => Post, (post) => post.votes, {
+  @ManyToOne(() => Post, (post) => post.comments, {
     onDelete: "CASCADE"
   })
   post!: Post;
+
+  @Field()
+  canEdit!: boolean;
 
   @Field(() => String)
   @CreateDateColumn()

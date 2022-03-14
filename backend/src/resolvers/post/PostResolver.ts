@@ -22,6 +22,7 @@ import handleCreatePost, {
   CreatePostInput,
   CreatePostResult
 } from "./createPost";
+import { DeleteCommentInput, handleDeleteComment } from "./deleteComment";
 import handleDeletePost, { DeletePostInput } from "./deletePost";
 import handleEditPost, { EditPostInput } from "./editPost";
 import {
@@ -84,9 +85,10 @@ export class PostResolver {
   @Query(() => GetMoreCommentsResult)
   @UseMiddleware(isAuth)
   async getMoreComments(
-    @Arg("options") options: GetMoreCommentsInput
+    @Arg("options") options: GetMoreCommentsInput,
+    @Ctx() context: MyContext
   ): Promise<GetMoreCommentsResult> {
-    return await handleGetMoreComments(options);
+    return await handleGetMoreComments(options, context);
   }
 
   @Mutation(() => RegularResult)
@@ -104,5 +106,14 @@ export class PostResolver {
     @Arg("input") input: DeletePostInput
   ): Promise<RegularResult> {
     return await handleDeletePost(input);
+  }
+
+  @Mutation(() => RegularResult)
+  @UseMiddleware(isAuth)
+  async deleteComment(
+    @Arg("input") input: DeleteCommentInput,
+    @Ctx() context: MyContext
+  ): Promise<RegularResult> {
+    return await handleDeleteComment(input, context);
   }
 }

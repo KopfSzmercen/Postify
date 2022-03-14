@@ -8,13 +8,15 @@ import {
   Text,
   useDisclosure
 } from "@chakra-ui/react";
-import React from "react";
+import React, { lazy } from "react";
 import { useNavigate } from "react-router-dom";
 import { PostFragmentFragment } from "../../generated";
-import VoteSection from "./VoteSection";
+
 import { FaEdit } from "react-icons/fa";
 import { ImBin2 } from "react-icons/im";
-import ConfirmDeleteModal from "./ConfirmDeleteModal";
+
+const ConfirmDeleteModal = lazy(() => import("./ConfirmDeleteModal"));
+const VoteSection = lazy(() => import("./VoteSection"));
 
 const PostCard: React.FC<{
   post: PostFragmentFragment;

@@ -16,10 +16,14 @@ const useIsAuth = () => {
     if (!loading && !data?.me.success) {
       if (isProtected) navigate("/login", { replace: true });
     } else if (!loading && data?.me.success) {
-      if (!isProtected) navigate("/dashboard", { replace: true });
       myUsernameVar(data!.me.username!);
+      if (!isProtected) {
+        navigate("/dashboard", { replace: true });
+      }
     }
   }, [loading]);
+
+  return loading;
 };
 
 export default useIsAuth;

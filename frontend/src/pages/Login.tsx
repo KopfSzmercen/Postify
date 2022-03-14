@@ -2,6 +2,7 @@ import { useMutation } from "@apollo/client";
 import { Box, Button, Text } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
+import { myUsernameVar } from "..";
 import { InputField } from "../components/ui/InputField";
 import Logo from "../components/ui/Logo";
 import { LoginDocument, LoginMutation } from "../generated";
@@ -41,6 +42,7 @@ const Login = () => {
               ) {
                 setErrors(formatFormErrors(response.data.login.errors));
               } else if (response.data?.login.success) {
+                myUsernameVar(response.data.login.username!);
                 navigate("/dashboard", { replace: true });
               }
             }}

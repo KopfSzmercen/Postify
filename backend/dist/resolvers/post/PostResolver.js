@@ -41,6 +41,7 @@ const isAuth_1 = __importDefault(require("../../middleware/isAuth"));
 const friends_1 = require("../user/friends");
 const comment_1 = require("./comment");
 const createPost_1 = __importStar(require("./createPost"));
+const deleteComment_1 = require("./deleteComment");
 const deletePost_1 = __importStar(require("./deletePost"));
 const editPost_1 = __importStar(require("./editPost"));
 const getPosts_1 = require("./getPosts");
@@ -61,14 +62,17 @@ let PostResolver = class PostResolver {
     async addComment(input, context) {
         return await comment_1.handleAddComment(input, context);
     }
-    async getMoreComments(options) {
-        return await comment_1.handleGetMoreComments(options);
+    async getMoreComments(options, context) {
+        return await comment_1.handleGetMoreComments(options, context);
     }
     async editPost(input, context) {
         return await editPost_1.default(input, context);
     }
     async deletePost(input) {
         return await deletePost_1.default(input);
+    }
+    async deleteComment(input, context) {
+        return await deleteComment_1.handleDeleteComment(input, context);
     }
 };
 __decorate([
@@ -120,8 +124,9 @@ __decorate([
     type_graphql_1.Query(() => comment_1.GetMoreCommentsResult),
     type_graphql_1.UseMiddleware(isAuth_1.default),
     __param(0, type_graphql_1.Arg("options")),
+    __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [comment_1.GetMoreCommentsInput]),
+    __metadata("design:paramtypes", [comment_1.GetMoreCommentsInput, Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "getMoreComments", null);
 __decorate([
@@ -141,6 +146,15 @@ __decorate([
     __metadata("design:paramtypes", [deletePost_1.DeletePostInput]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "deletePost", null);
+__decorate([
+    type_graphql_1.Mutation(() => friends_1.RegularResult),
+    type_graphql_1.UseMiddleware(isAuth_1.default),
+    __param(0, type_graphql_1.Arg("input")),
+    __param(1, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [deleteComment_1.DeleteCommentInput, Object]),
+    __metadata("design:returntype", Promise)
+], PostResolver.prototype, "deleteComment", null);
 PostResolver = __decorate([
     type_graphql_1.Resolver(Post_1.Post)
 ], PostResolver);

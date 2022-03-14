@@ -29,6 +29,9 @@ export class PaginatedComment {
 
   @Field()
   creatorId!: number;
+
+  @Field()
+  canEdit!: string;
 }
 
 @ObjectType()

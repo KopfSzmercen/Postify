@@ -22,6 +22,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Comment.prototype, "id", void 0);
 __decorate([
+    type_graphql_1.Field(),
     typeorm_1.PrimaryColumn(),
     __metadata("design:type", Number)
 ], Comment.prototype, "userId", void 0);
@@ -35,17 +36,21 @@ __decorate([
     __metadata("design:type", Number)
 ], Comment.prototype, "postId", void 0);
 __decorate([
-    typeorm_1.ManyToOne(() => User_1.User, (user) => user.votes, {
+    typeorm_1.ManyToOne(() => User_1.User, (user) => user.comments, {
         onDelete: "CASCADE"
     }),
     __metadata("design:type", User_1.User)
 ], Comment.prototype, "user", void 0);
 __decorate([
-    typeorm_1.ManyToOne(() => Post_1.Post, (post) => post.votes, {
+    typeorm_1.ManyToOne(() => Post_1.Post, (post) => post.comments, {
         onDelete: "CASCADE"
     }),
     __metadata("design:type", Post_1.Post)
 ], Comment.prototype, "post", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Boolean)
+], Comment.prototype, "canEdit", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.CreateDateColumn(),

@@ -37,6 +37,10 @@ __decorate([
     type_graphql_1.Field(),
     __metadata("design:type", Number)
 ], PaginatedComment.prototype, "creatorId", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], PaginatedComment.prototype, "canEdit", void 0);
 PaginatedComment = __decorate([
     type_graphql_1.ObjectType()
 ], PaginatedComment);
