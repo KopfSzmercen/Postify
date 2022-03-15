@@ -1,5 +1,5 @@
 import path from "path";
-import { createConnection } from "typeorm";
+import { Connection, createConnection } from "typeorm";
 import { Comment } from "../entities/Comment";
 import { Friendship } from "../entities/Friendship";
 import { Note } from "../entities/Note";
@@ -7,21 +7,40 @@ import { Post } from "../entities/Post";
 import { User } from "../entities/User";
 import { Vote } from "../entities/Vote";
 import "dotenv/config";
+import * as ConnectionParser from "pg-connection-string";
+import "dotenv/config";
 
 const connectDB = async () => {
   try {
-    const connection = await createConnection({
-      type: "postgres",
-      host: "localhost",
-      port: 5432,
-      username: "postgres",
-      password: "qqqqqq",
-      database: "gql",
-      entities: [User, Friendship, Post, Vote, Comment, Note],
-      synchronize: true,
-      logging: process.env.MODE === "DEV",
-      migrations: [path.join(__dirname, "./migrations/*")]
-    });
+    let connection: Connection | null = null;
+    if (process.env.MODE === "DEV") {
+      connection = await createConnection({
+        type: "postgres",
+        host: "localhost",
+        port: 5432,
+        username: "postgres",
+        password: "qqqqqq",
+        database: "gql",
+        entities: [User, Friendship, Post, Vote, Comment, Note],
+        synchronize: true,
+        logging: process.env.MODE === "DEV",
+        migrations: [path.join(__dirname, "./migrations/*")]
+      });
+    } else {
+      const databaseUrl: string = process.env.DATABASE_URL!;
+      const connectionOptions = ConnectionParser.parse(databaseUrl);
+
+      const typeOrmOptions: any = {
+        type: "postgres",
+        host: connectionOptions.host,
+        port: connectionOptions.port,
+        password: connectionOptions.password,
+        database: connectionOptions.database,
+        synchronize: true,
+        entities: [User, Friendship, Post, Vote, Comment, Note]
+      };
+      connection = await createConnection(typeOrmOptions);
+    }
 
     await connection.query(`
     CREATE OR REPLACE FUNCTION get_status(u1 int, u2 int)

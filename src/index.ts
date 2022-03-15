@@ -74,6 +74,10 @@ async function main() {
     }
   });
 
+  if (process.env.MODE === "PROD") {
+    app.use(express.static("frontend/build"));
+  }
+
   httpServer.listen({ port: PORT });
   console.log(
     `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
