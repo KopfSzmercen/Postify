@@ -56,6 +56,7 @@ const connectDB = async () => {
             const typeOrmOptions = {
                 type: "postgres",
                 host: connectionOptions.host,
+                user: connectionOptions.user,
                 port: connectionOptions.port,
                 password: connectionOptions.password,
                 database: connectionOptions.database,

@@ -12,17 +12,14 @@ const http_1 = __importDefault(require("http"));
 const type_graphql_1 = require("type-graphql");
 const UserResolver_1 = require("./resolvers/user/UserResolver");
 const connectDB_1 = __importDefault(require("./utils/connectDB"));
-const ioredis_1 = __importDefault(require("ioredis"));
 const express_session_1 = __importDefault(require("express-session"));
-const connect_redis_1 = __importDefault(require("connect-redis"));
 const PostResolver_1 = require("./resolvers/post/PostResolver");
 const NoteResolver_1 = require("./resolvers/note/NoteResolver");
 require("dotenv/config");
+const connect_mongo_1 = __importDefault(require("connect-mongo"));
 const PORT = process.env.PORT || 4000;
 async function main() {
     await connectDB_1.default();
-    const redisClient = new ioredis_1.default();
-    const RedisStore = connect_redis_1.default(express_session_1.default);
     const app = express_1.default();
     app.set("trust proxy", 1);
     app.use(express_1.default.json());
@@ -31,10 +28,12 @@ async function main() {
     }));
     app.use(express_session_1.default({
         name: "userId",
-        store: new RedisStore({ client: redisClient }),
+        resave: false,
+        store: connect_mongo_1.default.create({
+            mongoUrl: process.env.MONGO_URI
+        }),
         saveUninitialized: false,
         secret: process.env.COOKIE_SECRET,
-        resave: false,
         cookie: {
             maxAge: 1000 * 60 * 60 * 24 * 10 * 40,
             httpOnly: true,

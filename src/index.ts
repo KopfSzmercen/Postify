@@ -7,19 +7,16 @@ import http from "http";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./resolvers/user/UserResolver";
 import connectDB from "./utils/connectDB";
-import Redis from "ioredis";
 import session from "express-session";
-import connectRedis from "connect-redis";
 import { PostResolver } from "./resolvers/post/PostResolver";
 import { NoteResolver } from "./resolvers/note/NoteResolver";
 import "dotenv/config";
+import MongoStore from "connect-mongo";
 
 const PORT = process.env.PORT || 4000;
 
 async function main() {
   await connectDB();
-  const redisClient = new Redis();
-  const RedisStore = connectRedis(session);
 
   const app = express();
   app.set("trust proxy", 1);
@@ -30,13 +27,16 @@ async function main() {
       extended: true
     })
   );
+
   app.use(
     session({
       name: "userId",
-      store: new RedisStore({ client: redisClient }),
+      resave: false,
+      store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI!
+      }),
       saveUninitialized: false,
       secret: process.env.COOKIE_SECRET!,
-      resave: false,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 10 * 40,
         httpOnly: true,
@@ -45,6 +45,7 @@ async function main() {
       }
     })
   );
+
   app.use(
     cors({
       origin: ["*", "http://localhost:3000"],
