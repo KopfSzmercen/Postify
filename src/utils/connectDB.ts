@@ -39,7 +39,12 @@ const connectDB = async () => {
         database: connectionOptions.database,
         synchronize: true,
         entities: [User, Friendship, Post, Vote, Comment, Note],
-        ssl: true
+        ssl: true,
+        extra: {
+          ssl: {
+            rejectUnauthorized: false
+          }
+        }
       };
       connection = await createConnection(typeOrmOptions);
     }

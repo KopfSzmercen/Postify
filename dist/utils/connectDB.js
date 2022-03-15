@@ -62,7 +62,12 @@ const connectDB = async () => {
                 database: connectionOptions.database,
                 synchronize: true,
                 entities: [User_1.User, Friendship_1.Friendship, Post_1.Post, Vote_1.Vote, Comment_1.Comment, Note_1.Note],
-                ssl: true
+                ssl: true,
+                extra: {
+                    ssl: {
+                        rejectUnauthorized: false
+                    }
+                }
             };
             connection = await typeorm_1.createConnection(typeOrmOptions);
         }
