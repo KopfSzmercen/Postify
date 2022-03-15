@@ -11,6 +11,7 @@ const Note_1 = require("../entities/Note");
 const Post_1 = require("../entities/Post");
 const User_1 = require("../entities/User");
 const Vote_1 = require("../entities/Vote");
+require("dotenv/config");
 const connectDB = async () => {
     try {
         const connection = await typeorm_1.createConnection({
@@ -22,7 +23,7 @@ const connectDB = async () => {
             database: "gql",
             entities: [User_1.User, Friendship_1.Friendship, Post_1.Post, Vote_1.Vote, Comment_1.Comment, Note_1.Note],
             synchronize: true,
-            logging: true,
+            logging: process.env.MODE === "DEV",
             migrations: [path_1.default.join(__dirname, "./migrations/*")]
         });
         await connection.query(`

@@ -3,11 +3,7 @@ import { Box, Button, Icon, Input, Text, Textarea } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import {
-  CreatePostDocument,
-  CreatePostMutation,
-  PostFragmentFragmentDoc
-} from "../generated";
+import { CreatePostDocument, CreatePostMutation } from "../generated";
 
 const AddPostForm = () => {
   const [isTitleError, setIsTitleError] = useState(false);
@@ -22,11 +18,6 @@ const AddPostForm = () => {
         cache.modify({
           fields: {
             getPaginatedPosts(existing) {
-              // const newPostRef = cache.writeFragment({
-              //   data: data?.createPost.returnedPost,
-              //   fragment: PostFragmentFragmentDoc
-              // });
-
               return {
                 ...existing,
                 posts: [data.createPost.returnedPost, ...existing.posts]

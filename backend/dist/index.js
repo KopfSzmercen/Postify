@@ -17,6 +17,8 @@ const express_session_1 = __importDefault(require("express-session"));
 const connect_redis_1 = __importDefault(require("connect-redis"));
 const PostResolver_1 = require("./resolvers/post/PostResolver");
 const NoteResolver_1 = require("./resolvers/note/NoteResolver");
+require("dotenv/config");
+const PORT = process.env.PORT || 4000;
 async function main() {
     await connectDB_1.default();
     const redisClient = new ioredis_1.default();
@@ -31,7 +33,7 @@ async function main() {
         name: "userId",
         store: new RedisStore({ client: redisClient }),
         saveUninitialized: false,
-        secret: "dsfdewfewfewq",
+        secret: process.env.COOKIE_SECRET,
         resave: false,
         cookie: {
             maxAge: 1000 * 60 * 60 * 24 * 10 * 40,
@@ -41,7 +43,7 @@ async function main() {
         }
     }));
     app.use(cors_1.default({
-        origin: ["https://studio.apollographql.com", "http://localhost:3000"],
+        origin: ["*", "http://localhost:3000"],
         credentials: true,
         methods: ["GET", "PUT", "POST", "OPTIONS"]
     }));
@@ -59,11 +61,11 @@ async function main() {
         app,
         cors: {
             credentials: true,
-            origin: ["https://studio.apollographql.com", "http://localhost:3000"],
+            origin: ["*"],
             methods: ["GET", "PUT", "POST", "OPTIONS"]
         }
     });
-    httpServer.listen({ port: 4000 });
-    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
+    httpServer.listen({ port: PORT });
+    console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
 }
 main().catch((error) => console.log(error));

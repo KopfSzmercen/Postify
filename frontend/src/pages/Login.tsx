@@ -7,7 +7,6 @@ import { InputField } from "../components/ui/InputField";
 import Logo from "../components/ui/Logo";
 import { LoginDocument, LoginMutation } from "../generated";
 import formatFormErrors from "../utils/formatFormErrors";
-import useIsAuth from "../utils/useIsAuth";
 
 const Login = () => {
   const navigate = useNavigate();

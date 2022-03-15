@@ -21,7 +21,7 @@ import { FaArrowCircleRight } from "react-icons/fa";
 import { useMutation, useReactiveVar } from "@apollo/client";
 import { LogoutDocument, LogoutMutation } from "../../../generated";
 import { useNavigate } from "react-router-dom";
-import { myUsernameVar } from "../../..";
+import { client, myUsernameVar } from "../../..";
 
 export default function AuthNavbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -73,6 +73,8 @@ export default function AuthNavbar() {
                   onClick={async () => {
                     const response = await logout();
                     if (response.data?.logout) {
+                      myUsernameVar("");
+                      await client.clearStore();
                       navigate("/", { replace: true });
                     }
                   }}

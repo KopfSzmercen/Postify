@@ -6,6 +6,7 @@ import { Note } from "../entities/Note";
 import { Post } from "../entities/Post";
 import { User } from "../entities/User";
 import { Vote } from "../entities/Vote";
+import "dotenv/config";
 
 const connectDB = async () => {
   try {
@@ -18,7 +19,7 @@ const connectDB = async () => {
       database: "gql",
       entities: [User, Friendship, Post, Vote, Comment, Note],
       synchronize: true,
-      logging: true,
+      logging: process.env.MODE === "DEV",
       migrations: [path.join(__dirname, "./migrations/*")]
     });
 
