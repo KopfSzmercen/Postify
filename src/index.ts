@@ -79,7 +79,7 @@ async function main() {
   if (process.env.MODE === "PROD") {
     app.use(express.static("frontend/build"));
     app.get("/*", (req, res) => {
-      res.sendFile(`frontend/build/index.html`);
+      res.sendFile(path.resolve(`frontend/build/index.html`));
     });
   }
   // const root = path.join(__dirname, "../frontend/build/");

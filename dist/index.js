@@ -17,6 +17,7 @@ const PostResolver_1 = require("./resolvers/post/PostResolver");
 const NoteResolver_1 = require("./resolvers/note/NoteResolver");
 require("dotenv/config");
 const connect_mongo_1 = __importDefault(require("connect-mongo"));
+const path_1 = __importDefault(require("path"));
 const PORT = process.env.PORT || 4000;
 async function main() {
     await connectDB_1.default();
@@ -67,7 +68,7 @@ async function main() {
     if (process.env.MODE === "PROD") {
         app.use(express_1.default.static("frontend/build"));
         app.get("/*", (req, res) => {
-            res.sendFile(`frontend/build/index.html`);
+            res.sendFile(path_1.default.resolve(`frontend/build/index.html`));
         });
     }
     // const root = path.join(__dirname, "../frontend/build/");
