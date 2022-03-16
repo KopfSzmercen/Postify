@@ -39,7 +39,7 @@ async function main() {
             maxAge: 1000 * 60 * 60 * 24 * 10 * 40,
             httpOnly: true,
             secure: false,
-            sameSite: "lax"
+            sameSite: "none"
         }
     }));
     app.use(cors_1.default({
