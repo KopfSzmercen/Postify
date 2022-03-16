@@ -21,6 +21,7 @@ const useIsAuth = () => {
         navigate("/dashboard", { replace: true });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
   return loading;

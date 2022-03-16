@@ -1,15 +1,19 @@
 import { Box } from "@chakra-ui/react";
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import AuthNavbar from "../../components/ui/navbar/AuthNavbar";
 import Overlay from "../../components/ui/overlay/Overlay";
+import CreatePostPage from "./CreatePostPage";
+import EditPostPage from "./EditPostPage";
 import { MainDashboardPage } from "./MainDashboardPage";
+import Notifications from "./Notifications";
+import PostDetailPage from "./PostDetailPage";
 import Users from "./Users";
 
-const PostDetailPage = lazy(() => import("./PostDetailPage"));
-const CreatePostPage = lazy(() => import("./CreatePostPage"));
-const Notifications = lazy(() => import("./Notifications"));
-const EditPostPage = lazy(() => import("./EditPostPage"));
+// const PostDetailPage = lazy(() => import("./PostDetailPage"));
+// const CreatePostPage = lazy(() => import("./CreatePostPage"));
+// const Notifications = lazy(() => import("./Notifications"));
+// const EditPostPage = lazy(() => import("./EditPostPage"));
 
 const Dashboard = () => {
   // useIsAuth();
