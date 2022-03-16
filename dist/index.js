@@ -47,6 +47,10 @@ async function main() {
         credentials: true,
         methods: ["GET", "PUT", "POST", "OPTIONS"]
     }));
+    app.use((req, res, next) => {
+        res.header("Access-Control-Allow-Origin", "*");
+        next();
+    });
     const httpServer = http_1.default.createServer(app);
     const server = new apollo_server_express_1.ApolloServer({
         schema: await type_graphql_1.buildSchema({
