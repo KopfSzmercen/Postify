@@ -66,7 +66,18 @@ async function main() {
     });
     if (process.env.MODE === "PROD") {
         app.use(express_1.default.static("frontend/build"));
+        app.get("/*", (req, res) => {
+            res.sendFile(`frontend/build/index.html`);
+        });
     }
+    // const root = path.join(__dirname, "../frontend/build/");
+    // // console.log(root);
+    // app.use(express.static(root));
+    // app.get("/*", (req, res) => {
+    //   console.log(root);
+    //   // console.log(req.url);
+    //   res.sendFile(`${root}index.html`);
+    // });
     httpServer.listen({ port: PORT });
     console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
 }

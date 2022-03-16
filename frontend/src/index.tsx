@@ -66,7 +66,7 @@ export const cache = new InMemoryCache({
 });
 
 export const client = new ApolloClient({
-  uri: "https://postify-1426.herokuapp.com/graphql",
+  uri: "http://localhost:4000/graphql",
   cache,
   credentials: "include"
 });

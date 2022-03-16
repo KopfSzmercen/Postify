@@ -12,6 +12,7 @@ import { PostResolver } from "./resolvers/post/PostResolver";
 import { NoteResolver } from "./resolvers/note/NoteResolver";
 import "dotenv/config";
 import MongoStore from "connect-mongo";
+import path from "path";
 
 const PORT = process.env.PORT || 4000;
 
@@ -77,7 +78,20 @@ async function main() {
 
   if (process.env.MODE === "PROD") {
     app.use(express.static("frontend/build"));
+    app.get("/*", (req, res) => {
+      res.sendFile(`frontend/build/index.html`);
+    });
   }
+  // const root = path.join(__dirname, "../frontend/build/");
+
+  // // console.log(root);
+
+  // app.use(express.static(root));
+  // app.get("/*", (req, res) => {
+  //   console.log(root);
+  //   // console.log(req.url);
+  //   res.sendFile(`${root}index.html`);
+  // });
 
   httpServer.listen({ port: PORT });
   console.log(
