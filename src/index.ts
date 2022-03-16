@@ -68,12 +68,7 @@ async function main() {
 
   await server.start();
   server.applyMiddleware({
-    app,
-    cors: {
-      origin: "*",
-      credentials: true,
-      methods: ["GET", "PUT", "POST", "OPTIONS"]
-    }
+    app
   });
 
   if (process.env.MODE === "PROD") {
@@ -83,10 +78,12 @@ async function main() {
     });
   }
 
-  // app.use(express.static(path.join(__dirname, "../", "frontend/build")));
-  // app.get("/*", (req, res) => {
-  //   res.sendFile(path.join(__dirname, "../", `frontend/build/index.html`));
-  // });
+  app.use(express.static(path.join(__dirname, "../", "frontend/build")));
+  app.get("/*", (req, res) => {
+    return res.sendFile(
+      path.join(__dirname, "../", `frontend/build/index.html`)
+    );
+  });
 
   httpServer.listen({ port: PORT });
   console.log(
