@@ -43,11 +43,7 @@ async function main() {
         }
     }));
     app.use(cors_1.default({
-        origin: [
-            "*",
-            "http://localhost:3000",
-            "https://awesome-shockley-087e88.netlify.app/"
-        ],
+        origin: "*",
         credentials: true,
         methods: ["GET", "PUT", "POST", "OPTIONS"]
     }));
@@ -63,7 +59,11 @@ async function main() {
     await server.start();
     server.applyMiddleware({
         app,
-        cors: false
+        cors: {
+            origin: "*",
+            credentials: true,
+            methods: ["GET", "PUT", "POST", "OPTIONS"]
+        }
     });
     if (process.env.MODE === "PROD") {
         app.use(express_1.default.static("frontend/build"));
