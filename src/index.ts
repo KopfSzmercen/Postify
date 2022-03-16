@@ -82,16 +82,6 @@ async function main() {
       res.sendFile(path.resolve(`frontend/build/index.html`));
     });
   }
-  // const root = path.join(__dirname, "../frontend/build/");
-
-  // // console.log(root);
-
-  // app.use(express.static(root));
-  // app.get("/*", (req, res) => {
-  //   console.log(root);
-  //   // console.log(req.url);
-  //   res.sendFile(`${root}index.html`);
-  // });
 
   httpServer.listen({ port: PORT });
   console.log(

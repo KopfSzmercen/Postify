@@ -71,14 +71,6 @@ async function main() {
             res.sendFile(path_1.default.resolve(`frontend/build/index.html`));
         });
     }
-    // const root = path.join(__dirname, "../frontend/build/");
-    // // console.log(root);
-    // app.use(express.static(root));
-    // app.get("/*", (req, res) => {
-    //   console.log(root);
-    //   // console.log(req.url);
-    //   res.sendFile(`${root}index.html`);
-    // });
     httpServer.listen({ port: PORT });
     console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
 }
