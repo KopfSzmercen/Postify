@@ -73,11 +73,7 @@ async function main() {
   await server.start();
   server.applyMiddleware({
     app,
-    cors: {
-      credentials: true,
-      origin: ["*", "https://awesome-shockley-087e88.netlify.app/"],
-      methods: ["GET", "PUT", "POST", "OPTIONS"]
-    }
+    cors: false
   });
 
   if (process.env.MODE === "PROD") {
