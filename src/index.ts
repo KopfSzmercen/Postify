@@ -41,28 +41,23 @@ async function main() {
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 10 * 40,
         httpOnly: true,
-        secure: true,
-        sameSite: "none"
+        secure: false,
+        sameSite: "lax"
       }
     })
   );
 
   app.use(
     cors({
-      origin: "https://awesome-shockley-087e88.netlify.app",
+      origin: [
+        "http://localhost:3000",
+        "https://awesome-shockley-087e88.netlify.app",
+        "*"
+      ],
       credentials: true,
       methods: ["GET", "PUT", "POST", "OPTIONS"]
     })
   );
-
-  app.use((req, res, next) => {
-    res.header(
-      "Access-Control-Allow-Origin",
-      "https://awesome-shockley-087e88.netlify.app"
-    );
-
-    next();
-  });
 
   const httpServer = http.createServer(app);
 
@@ -79,18 +74,22 @@ async function main() {
   server.applyMiddleware({
     app,
     cors: {
-      origin: "https://awesome-shockley-087e88.netlify.app",
+      origin: [
+        "http://localhost:3000",
+        "https://awesome-shockley-087e88.netlify.app",
+        "*"
+      ],
       credentials: true,
       methods: ["GET", "PUT", "POST", "OPTIONS"]
     }
   });
 
-  // if (process.env.MODE === "PROD") {
-  //   app.use(express.static("frontend/build"));
-  //   app.get("/*", (req, res) => {
-  //     res.sendFile(path.resolve(`frontend/build/index.html`));
-  //   });
-  // }
+  if (process.env.MODE === "PROD") {
+    app.use(express.static("frontend/build"));
+    app.get("/*", (req, res) => {
+      res.sendFile(path.resolve(`frontend/build/index.html`));
+    });
+  }
 
   httpServer.listen({ port: PORT });
   console.log(

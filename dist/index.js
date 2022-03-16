@@ -17,6 +17,7 @@ const PostResolver_1 = require("./resolvers/post/PostResolver");
 const NoteResolver_1 = require("./resolvers/note/NoteResolver");
 require("dotenv/config");
 const connect_mongo_1 = __importDefault(require("connect-mongo"));
+const path_1 = __importDefault(require("path"));
 const PORT = process.env.PORT || 4000;
 async function main() {
     await connectDB_1.default();
@@ -37,19 +38,19 @@ async function main() {
         cookie: {
             maxAge: 1000 * 60 * 60 * 24 * 10 * 40,
             httpOnly: true,
-            secure: true,
-            sameSite: "none"
+            secure: false,
+            sameSite: "lax"
         }
     }));
     app.use(cors_1.default({
-        origin: "https://awesome-shockley-087e88.netlify.app",
+        origin: [
+            "http://localhost:3000",
+            "https://awesome-shockley-087e88.netlify.app",
+            "*"
+        ],
         credentials: true,
         methods: ["GET", "PUT", "POST", "OPTIONS"]
     }));
-    app.use((req, res, next) => {
-        res.header("Access-Control-Allow-Origin", "https://awesome-shockley-087e88.netlify.app");
-        next();
-    });
     const httpServer = http_1.default.createServer(app);
     const server = new apollo_server_express_1.ApolloServer({
         schema: await type_graphql_1.buildSchema({
@@ -63,17 +64,21 @@ async function main() {
     server.applyMiddleware({
         app,
         cors: {
-            origin: "https://awesome-shockley-087e88.netlify.app",
+            origin: [
+                "http://localhost:3000",
+                "https://awesome-shockley-087e88.netlify.app",
+                "*"
+            ],
             credentials: true,
             methods: ["GET", "PUT", "POST", "OPTIONS"]
         }
     });
-    // if (process.env.MODE === "PROD") {
-    //   app.use(express.static("frontend/build"));
-    //   app.get("/*", (req, res) => {
-    //     res.sendFile(path.resolve(`frontend/build/index.html`));
-    //   });
-    // }
+    if (process.env.MODE === "PROD") {
+        app.use(express_1.default.static("frontend/build"));
+        app.get("/*", (req, res) => {
+            res.sendFile(path_1.default.resolve(`frontend/build/index.html`));
+        });
+    }
     httpServer.listen({ port: PORT });
     console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
 }
