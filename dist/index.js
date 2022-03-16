@@ -58,7 +58,8 @@ async function main() {
     });
     await server.start();
     server.applyMiddleware({
-        app
+        app,
+        cors: false
     });
     if (process.env.MODE === "PROD") {
         app.use(express_1.default.static("frontend/build"));
@@ -66,10 +67,6 @@ async function main() {
             res.sendFile(path_1.default.resolve(`frontend/build/index.html`));
         });
     }
-    app.use(express_1.default.static(path_1.default.join(__dirname, "../", "frontend/build")));
-    app.get("/*", (req, res) => {
-        return res.sendFile(path_1.default.join(__dirname, "../", `frontend/build/index.html`));
-    });
     httpServer.listen({ port: PORT });
     console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
 }
