@@ -43,12 +43,12 @@ async function main() {
         }
     }));
     app.use(cors_1.default({
-        origin: "*",
+        origin: "https://awesome-shockley-087e88.netlify.app",
         credentials: true,
         methods: ["GET", "PUT", "POST", "OPTIONS"]
     }));
     app.use((req, res, next) => {
-        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Origin", "https://awesome-shockley-087e88.netlify.app");
         next();
     });
     const httpServer = http_1.default.createServer(app);
