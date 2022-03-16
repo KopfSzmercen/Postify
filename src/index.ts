@@ -85,12 +85,12 @@ async function main() {
     }
   });
 
-  if (process.env.MODE === "PROD") {
-    app.use(express.static("frontend/build"));
-    app.get("/*", (req, res) => {
-      res.sendFile(path.resolve(`frontend/build/index.html`));
-    });
-  }
+  // if (process.env.MODE === "PROD") {
+  //   app.use(express.static("frontend/build"));
+  //   app.get("/*", (req, res) => {
+  //     res.sendFile(path.resolve(`frontend/build/index.html`));
+  //   });
+  // }
 
   httpServer.listen({ port: PORT });
   console.log(

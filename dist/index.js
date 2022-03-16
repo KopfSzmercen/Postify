@@ -17,7 +17,6 @@ const PostResolver_1 = require("./resolvers/post/PostResolver");
 const NoteResolver_1 = require("./resolvers/note/NoteResolver");
 require("dotenv/config");
 const connect_mongo_1 = __importDefault(require("connect-mongo"));
-const path_1 = __importDefault(require("path"));
 const PORT = process.env.PORT || 4000;
 async function main() {
     await connectDB_1.default();
@@ -69,12 +68,12 @@ async function main() {
             methods: ["GET", "PUT", "POST", "OPTIONS"]
         }
     });
-    if (process.env.MODE === "PROD") {
-        app.use(express_1.default.static("frontend/build"));
-        app.get("/*", (req, res) => {
-            res.sendFile(path_1.default.resolve(`frontend/build/index.html`));
-        });
-    }
+    // if (process.env.MODE === "PROD") {
+    //   app.use(express.static("frontend/build"));
+    //   app.get("/*", (req, res) => {
+    //     res.sendFile(path.resolve(`frontend/build/index.html`));
+    //   });
+    // }
     httpServer.listen({ port: PORT });
     console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
 }
