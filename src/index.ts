@@ -13,6 +13,8 @@ import { NoteResolver } from "./resolvers/note/NoteResolver";
 import "dotenv/config";
 import MongoStore from "connect-mongo";
 import path from "path";
+import history from "connect-history-api-fallback";
+import compression from "compression";
 
 const PORT = process.env.PORT || 4000;
 
@@ -22,12 +24,15 @@ async function main() {
   const app = express();
   app.set("trust proxy", 1);
 
+  app.use(history());
   app.use(express.json());
   app.use(
     express.urlencoded({
       extended: true
     })
   );
+
+  app.use(compression());
 
   app.use(
     session({
@@ -85,9 +90,10 @@ async function main() {
   });
 
   if (process.env.MODE === "PROD") {
-    app.use(express.static("frontend/build"));
-    app.get("/*", (req, res) => {
-      res.sendFile(path.resolve(`frontend/build/index.html`));
+    const frontend = path.join(__dirname, "../frontend/build");
+    app.use(express.static(frontend));
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(frontend, "/index.html"));
     });
   }
 
