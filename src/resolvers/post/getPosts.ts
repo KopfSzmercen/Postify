@@ -54,7 +54,7 @@ export const handleGetSinglePost = async (
           select json_build_object (
             'text', c.text, 
             'id', c.id, 
-            'updatedAt', to_char(c."updatedAt", 'YYYY.MM.DD HH24:MI'), 
+            'updatedAt', c."updatedAt", 
             'creatorName', username,
             'creatorId', creat.id,
             'canEdit', (case when c."userId" = $1 then 'true' else 'false' end)

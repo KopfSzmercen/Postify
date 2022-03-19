@@ -25,6 +25,17 @@ const CommentsListItem: React.FC<{ comment: CommentFragmentFragment }> = ({
     DeleteCommentDocument
   );
   const [isLoading, setIsLoading] = useState(false);
+  const parsedDate = new Date(comment.updatedAt);
+  const formatDate =
+    parsedDate.getDay() +
+    "." +
+    parsedDate.getMonth() +
+    "." +
+    parsedDate.getFullYear() +
+    " " +
+    parsedDate.getHours() +
+    ":" +
+    parsedDate.getMinutes();
 
   return (
     <Box p="15px" bg="whiteAlpha.800" borderRadius="5px">
@@ -70,7 +81,7 @@ const CommentsListItem: React.FC<{ comment: CommentFragmentFragment }> = ({
             />
           )}
         </Flex>
-        <Text>{comment.updatedAt}</Text>
+        <Text>{formatDate}</Text>
       </Stack>
       <Text mt="10px">{comment.text}</Text>
     </Box>

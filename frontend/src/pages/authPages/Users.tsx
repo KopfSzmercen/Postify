@@ -15,8 +15,12 @@ import { GetUsersDocument, GetUsersQuery } from "../../generated";
 import { FaArrowUp } from "react-icons/fa";
 import SearchUserInput from "../../components/ui/SearchUserInput";
 import SearchedUsers from "../../components/SearchedUsers";
+import useIsAuth from "../../utils/useIsAuth";
+import Overlay from "../../components/ui/overlay/Overlay";
 
 const Users: React.FC<{}> = () => {
+  const loadingAuth = useIsAuth();
+
   const { data, fetchMore, loading } = useQuery<GetUsersQuery>(
     GetUsersDocument,
     {
@@ -33,6 +37,8 @@ const Users: React.FC<{}> = () => {
   const scrollUp = () => {
     scrollToTarget.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  if (loadingAuth) return <Overlay />;
 
   if (loading) {
     return (

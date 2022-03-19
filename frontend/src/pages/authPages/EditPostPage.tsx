@@ -2,13 +2,17 @@ import { useQuery } from "@apollo/client";
 import { Box, Center, Progress } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import EditPostForm from "../../components/EditPostForm";
+import Overlay from "../../components/ui/overlay/Overlay";
 import {
   GetSinglePostDocument,
   GetSinglePostQuery,
   PostFragmentFragment
 } from "../../generated";
+import useIsAuth from "../../utils/useIsAuth";
 
 const EditPostPage = () => {
+  const loadingAuth = useIsAuth();
+
   const { postId } = useParams();
   const navigate = useNavigate();
 
@@ -20,6 +24,8 @@ const EditPostPage = () => {
       }
     }
   );
+
+  if (loadingAuth) return <Overlay />;
 
   if (loading && !data)
     return (

@@ -1,3 +1,24 @@
 body {
   background-color: rgb(228, 228, 228);
+  overflow-y: scroll;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a202cf3;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(2, 0, 36);
+  background: linear-gradient(180deg, #2b6cb0 35%, rgba(0, 212, 255, 1) 100%);
+  border-radius: 10px;
+  transition: 0.3;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2b6cb0;
+  transition: 0.3;
 }

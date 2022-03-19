@@ -12,7 +12,8 @@ import React from "react";
 import { FaEdit } from "react-icons/fa";
 import { ImBin2 } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
-import { PostFragmentFragment } from "../../generated";
+import { client } from "../..";
+import { GetSinglePostDocument, PostFragmentFragment } from "../../generated";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import VoteSection from "./VoteSection";
 
@@ -82,6 +83,12 @@ const PostCard: React.FC<{
           <Button
             colorScheme="yellow"
             onClick={() => navigate(`post/${post.id}`)}
+            onMouseOver={() => {
+              client.query({
+                query: GetSinglePostDocument,
+                variables: { postId: post.id }
+              });
+            }}
           >
             View details
           </Button>

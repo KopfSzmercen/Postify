@@ -15,7 +15,7 @@ function App() {
   const loading = useIsAuth();
   return (
     <Suspense fallback={<Overlay />}>
-      <Box className="App" bg="gray.200" minH="100vh">
+      <Box bg="gray.200" minH="100vh">
         {loading && <Overlay />}
         <Routes>
           <Route path="/" element={<MainPage />} />

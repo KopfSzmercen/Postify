@@ -70,6 +70,7 @@ export default function AuthNavbar() {
               </MenuButton>
               <MenuList>
                 <MenuItem
+                  p="5px"
                   onClick={async () => {
                     const response = await logout();
                     if (response.data?.logout) {

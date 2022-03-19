@@ -26,7 +26,7 @@ const Login = () => {
           p="10px 15px"
         >
           <Text fontSize="2xl" fontWeight="bold" align="center" pb="10px">
-            Login
+            Log in
           </Text>
 
           <Formik
@@ -81,7 +81,7 @@ const Login = () => {
                     mt={4}
                     isLoading={formik.isSubmitting}
                   >
-                    Login
+                    Log in
                   </Button>
                 </Box>
               </Form>

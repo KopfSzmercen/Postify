@@ -54,11 +54,7 @@ async function main() {
 
   app.use(
     cors({
-      origin: [
-        "http://localhost:3000",
-        "https://awesome-shockley-087e88.netlify.app",
-        "*"
-      ],
+      origin: ["http://localhost:3000", "*"],
       credentials: true,
       methods: ["GET", "PUT", "POST", "OPTIONS"]
     })
@@ -79,11 +75,7 @@ async function main() {
   server.applyMiddleware({
     app,
     cors: {
-      origin: [
-        "http://localhost:3000",
-        "https://awesome-shockley-087e88.netlify.app",
-        "*"
-      ],
+      origin: ["http://localhost:3000", "*"],
       credentials: true,
       methods: ["GET", "PUT", "POST", "OPTIONS"]
     }

@@ -69,7 +69,7 @@ const handleAddComment = async (input, ctx) => {
             text
         })
             .returning(`
-       "userId" "creatorId", id, "postId", to_char("updatedAt", 'YYYY.MM.DD HH:MM') "updatedAt", text
+       "userId" "creatorId", id, "postId", "updatedAt", text
       `)
             .execute();
         const creator = await globals_1.getConnection()
@@ -142,7 +142,7 @@ const handleGetMoreComments = async (input, ctx) => {
       select json_build_object (
         'text', c.text, 
         'id', c.id, 
-        'updatedAt', to_char(c."updatedAt", 'YYYY.MM.DD HH24:MI'), 
+        'updatedAt', c."updatedAt", 
         'creatorName', username,
         'creatorId', creat.id,
         'canEdit', (case when c."userId" = $3 then 'true' else 'false' end)   

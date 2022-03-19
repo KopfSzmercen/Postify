@@ -1,7 +1,12 @@
 import { Box, Center, Heading } from "@chakra-ui/react";
 import AddPostForm from "../../components/AddPostForm";
+import Overlay from "../../components/ui/overlay/Overlay";
+import useIsAuth from "../../utils/useIsAuth";
 
 const CreatePostPage = () => {
+  const loading = useIsAuth();
+
+  if (loading) return <Overlay />;
   return (
     <Center>
       <Box

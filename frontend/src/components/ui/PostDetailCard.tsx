@@ -37,9 +37,7 @@ const PostDetailCard = () => {
     {
       variables: {
         postId: parseInt(postId!)
-      },
-      fetchPolicy: "cache-and-network",
-      nextFetchPolicy: "cache-first"
+      }
     }
   );
 
@@ -53,10 +51,6 @@ const PostDetailCard = () => {
         maxWidth="400px"
       />
     );
-  }
-
-  if (!data?.getSinglePost.success) {
-    //TODO navigate to the error page
   }
 
   if (data?.getSinglePost.success && !data.getSinglePost.post) {

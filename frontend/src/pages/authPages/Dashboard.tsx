@@ -3,6 +3,7 @@ import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import AuthNavbar from "../../components/ui/navbar/AuthNavbar";
 import Overlay from "../../components/ui/overlay/Overlay";
+import useIsAuth from "../../utils/useIsAuth";
 import { MainDashboardPage } from "./MainDashboardPage";
 import Notifications from "./Notifications";
 
@@ -12,8 +13,10 @@ const PostDetailPage = lazy(() => import("./PostDetailPage"));
 const CreatePostPage = lazy(() => import("./CreatePostPage"));
 
 const Dashboard = () => {
+  const loading = useIsAuth();
   return (
     <Suspense fallback={<Overlay />}>
+      {loading && <Overlay />}
       <Box>
         <AuthNavbar />
         <Routes>

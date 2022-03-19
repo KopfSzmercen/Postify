@@ -54,7 +54,7 @@ export const handleAddComment = async (
       })
       .returning(
         `
-       "userId" "creatorId", id, "postId", to_char("updatedAt", 'YYYY.MM.DD HH:MM') "updatedAt", text
+       "userId" "creatorId", id, "postId", "updatedAt", text
       `
       )
       .execute();
@@ -123,7 +123,7 @@ export const handleGetMoreComments = async (
       select json_build_object (
         'text', c.text, 
         'id', c.id, 
-        'updatedAt', to_char(c."updatedAt", 'YYYY.MM.DD HH24:MI'), 
+        'updatedAt', c."updatedAt", 
         'creatorName', username,
         'creatorId', creat.id,
         'canEdit', (case when c."userId" = $3 then 'true' else 'false' end)   

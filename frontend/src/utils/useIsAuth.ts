@@ -7,7 +7,8 @@ import { MeDocument, MeQuery } from "../generated";
 const useIsAuth = () => {
   const navigate = useNavigate();
   const { data, loading } = useQuery<MeQuery>(MeDocument, {
-    fetchPolicy: "network-only"
+    fetchPolicy: "network-only",
+    nextFetchPolicy: "cache-and-network"
   });
   const params = useLocation();
   const isProtected = params.pathname.includes("/dashboard");
