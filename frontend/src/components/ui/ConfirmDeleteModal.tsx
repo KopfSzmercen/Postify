@@ -47,7 +47,19 @@ const ConfirmDeleteModal: React.FC<{
                 });
                 setIsLoading(false);
                 if (response.data?.deletePost.success) {
-                  cache.evict({ id: cache.identify(post) });
+                  cache.modify({
+                    fields: {
+                      getPaginatedPosts(existing) {
+                        const updatedPosts = existing.posts.filter(
+                          (p: PostFragmentFragment) => p.id !== post.id
+                        );
+                        return {
+                          ...existing,
+                          posts: [...updatedPosts]
+                        };
+                      }
+                    }
+                  });
                   onClose();
                   navigate("/dashboard", { replace: true });
                 }
